@@ -9,8 +9,8 @@ export async function loadWordLists() {
 
   try {
     const [answersRes, allowedRes] = await Promise.all([
-      fetch('/wordle-data/answers.json'),
-      fetch('/wordle-data/allowed.json')
+      fetch('wordle-data/answers.json'),
+      fetch('wordle-data/allowed.json')
     ]);
 
     if (!answersRes.ok || !allowedRes.ok) {
@@ -26,7 +26,13 @@ export async function loadWordLists() {
 
     loaded = true;
 
-    console.log('✅ Word lists loaded:', ANSWERS.length, 'answers,', ALLOWED.size, 'allowed');
+    console.log(
+      '✅ Word lists loaded:',
+      ANSWERS.length,
+      'answers,',
+      ALLOWED.size,
+      'allowed'
+    );
     console.log('First 5 answers:', ANSWERS.slice(0, 5));
   } catch (error) {
     console.error('❌ Failed to load word lists:', error);
@@ -53,10 +59,11 @@ export function getDailyAnswer() {
   start.setHours(0, 0, 0, 0);
   today.setHours(0, 0, 0, 0);
 
-  const index = Math.floor((today - start) / 86400000) % ANSWERS.length;
+  const index =
+    Math.floor((today - start) / 86400000) % ANSWERS.length;
 
   const answer = ANSWERS[index];
-  console.log('Today\'s answer:', answer);
-  
+  console.log("Today's answer:", answer);
+
   return answer;
 }

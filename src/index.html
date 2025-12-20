@@ -11,20 +11,21 @@
   <meta name="theme-color" content="#5f8f7a" />
 
   <!-- PWA -->
-  <link rel="manifest" href="/manifest.json" />
+  <link rel="manifest" href="manifest.json" />
 
-  <!-- iOS PWA support -->
+  <!-- iOS + Android PWA support -->
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="AT Games" />
 
-  <!-- App icon / favicon -->
-  <link rel="icon" type="image/png" href="/192.png" />
+  <!-- App icon -->
+  <link rel="icon" type="image/png" href="192.png" />
 </head>
 <body>
   <div id="app"></div>
 
   <!-- App entry -->
-  <script type="module" src="/main.js"></script>
+  <script type="module" src="main.js"></script>
 </body>
 </html>
