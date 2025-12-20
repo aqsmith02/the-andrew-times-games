@@ -143,9 +143,6 @@ export class ThisOrThatGame {
         <button class="review-btn" onclick="reviewThisOrThat()">
           Review Answers
         </button>
-        <button class="home-btn" onclick="showHome()">
-          Back to Home
-        </button>
       </div>
     `;
 
@@ -211,6 +208,10 @@ export class ThisOrThatGame {
             </button>
           </div>
         </div>
+      </div>
+
+      <div class="mobile-back-bar">
+        <button class="mobile-back-btn" onclick="showHome()">← Back</button>
       </div>
     `;
   }

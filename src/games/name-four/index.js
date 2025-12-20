@@ -74,6 +74,10 @@ export function startNameFour(container) {
 
       <div id="completion-message"></div>
     </div>
+
+    <div class="mobile-back-bar">
+      <button class="mobile-back-btn" id="mobile-back-home">← Back</button>
+    </div>
   `;
 
   const input = document.getElementById('guess-input');
@@ -82,6 +86,10 @@ export function startNameFour(container) {
   const completionMessage = document.getElementById('completion-message');
 
   document.getElementById('back-home').onclick = () => {
+    window.showHome();
+  };
+
+  document.getElementById('mobile-back-home').onclick = () => {
     window.showHome();
   };
 

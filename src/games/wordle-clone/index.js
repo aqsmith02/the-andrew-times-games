@@ -43,6 +43,10 @@ export async function startWordle(container) {
 
       <div id="wordle-root"></div>
     </div>
+
+    <div class="mobile-back-bar">
+      <button class="mobile-back-btn" id="mobile-back-home">← Back</button>
+    </div>
   `;
 
   const root = document.getElementById('wordle-root');
@@ -77,7 +81,7 @@ export async function startWordle(container) {
     }
   }
 
-  document.getElementById('back-home').onclick = () => {
+  const handleBackClick = () => {
     // Save progress before leaving
     if (!gameOver && guesses.length > 0) {
       saveWordleProgress({
@@ -91,6 +95,9 @@ export async function startWordle(container) {
     cleanup();
     window.showHome();
   };
+
+  document.getElementById('back-home').onclick = handleBackClick;
+  document.getElementById('mobile-back-home').onclick = handleBackClick;
 
   function addLetter(letter) {
     if (currentCol >= WORD_LENGTH || gameOver) return;
@@ -128,7 +135,7 @@ export async function startWordle(container) {
     const guess = Array.from(tiles).map(t => t.textContent).join('');
 
     if (!isValidGuess(guess)) {
-      showMessage('❌ Not in word list');
+      showMessage('⌫ Not in word list');
       return;
     }
 

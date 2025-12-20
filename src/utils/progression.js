@@ -40,7 +40,7 @@ You can write something sweet 💕`,
     level: 5,
     xpRequired: 1500,
     type: 'image',
-    path: '/rewards/simpsons.jpg',
+    path: '/rewards/simpsons.png',
     title: 'Another Picture of Me',
     description: 'Another one for your collection! 📸'
   },
