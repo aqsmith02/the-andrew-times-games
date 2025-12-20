@@ -32,34 +32,41 @@ export function reviewNameFour(container) {
 
   if (!saved || saved.date !== today) {
     container.innerHTML = `
-      <div class="name-four review">
+      <div class="name-four-review">
         <button class="back-btn" onclick="showHome()">← Back</button>
-        <h2>Name Four</h2>
-        <p>No completed game to review today.</p>
+
+        <div class="review-card">
+          <h2>Today's Name Four Review</h2>
+          <p style="text-align: center; color: #6b7280;">
+            No completed game to review today.
+          </p>
+        </div>
       </div>
     `;
     return;
   }
 
   container.innerHTML = `
-    <div class="name-four review">
+    <div class="name-four-review">
       <button class="back-btn" onclick="showHome()">← Back</button>
 
-      <h2>Name Four — Review</h2>
+      <div class="review-card">
+        <h2>Today's Name Four Review</h2>
 
-      <div class="category">
-        Category: <strong>${puzzle.category}</strong>
-      </div>
+        <div class="category">
+          Category: <strong>${puzzle.category}</strong>
+        </div>
 
-      <div class="found">
-        <h4>Correct Answers</h4>
-        <ul class="found-list">
-          ${saved.found.map(word => `<li>${word}</li>`).join('')}
-        </ul>
-      </div>
+        <div class="answers">
+          ${saved.found.map(word => `
+            <div class="review-answer">${word}</div>
+          `).join('')}
+        </div>
 
-      <div class="stats">
-        <p>Total guesses made: <strong>${saved.guessCount ?? saved.found.length}</strong></p>
+        <div class="stats">
+          Total guesses made:
+          <strong>${saved.guessCount ?? saved.found.length}</strong>
+        </div>
       </div>
     </div>
   `;

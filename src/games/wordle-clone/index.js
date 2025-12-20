@@ -35,7 +35,12 @@ export async function startWordle(container) {
 
   container.innerHTML = `
     <div class="wordle-wrapper">
-      <button class="back-btn" id="back-home">← Back</button>
+
+      <div class="wordle-header">
+        <button class="back-btn" id="back-home">← Back</button>
+        <h2>Wordle</h2>
+      </div>
+
       <div id="wordle-root"></div>
     </div>
   `;

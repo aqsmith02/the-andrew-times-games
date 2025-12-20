@@ -264,7 +264,7 @@ export function reviewTodayAnswers(container) {
   const content = `
     <div class="review-screen">
       <button class="back-btn" onclick="showHome()">← Back</button>
-      <h2>Today's Answer Review</h2>
+      <h2>Today's This or That Review</h2>
       <div class="review-score">Score: ${data.score} / 100 XP</div>
       <div class="review-list">
         ${data.answers.map((a, i) => `
