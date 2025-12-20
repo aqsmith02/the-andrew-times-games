@@ -81,3 +81,16 @@
   font-weight: bold;
 }
 
+.wordle-review-grid {
+  display: grid;
+  gap: 6px;
+  margin: 20px auto;
+  width: fit-content;
+}
+
+.wordle-review-grid .row {
+  display: flex;
+  gap: 6px;
+}
+
+

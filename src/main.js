@@ -2,12 +2,15 @@
 
 import './style.css';
 import { startThisOrThat, reviewTodayAnswers } from './games/this-or-that/index.js';
-import { progression } from './utils/progression.js';
 import { startWordle } from './games/wordle-clone/index.js';
-
+import { reviewTodayWordle } from './games/wordle-clone/review.js';
+import { progression } from './utils/progression.js';
 
 const app = document.getElementById('app');
 
+/* =========================
+   HOME SCREEN
+========================= */
 function showHome() {
   const currentLevel = progression.getCurrentLevel();
   const totalXP = progression.getTotalXP();
@@ -18,11 +21,13 @@ function showHome() {
     <div class="home-screen">
       <header class="app-header">
         <h1>Daily Games ❤️</h1>
+
         <div class="progress-summary">
           <div class="level-info">
             <span class="level">Level ${currentLevel}</span>
             <span class="xp">${totalXP} XP</span>
           </div>
+
           ${nextReward ? `
             <div class="next-reward">
               <div class="xp-bar">
@@ -39,38 +44,43 @@ function showHome() {
       </header>
 
       <div class="game-cards">
-        <div class="game-card ${progression.hasPlayedToday('thisOrThat') ? 'completed' : ''}" 
-             onclick="${progression.hasPlayedToday('thisOrThat') ? 'reviewGame(\'thisOrThat\')' : 'playGame(\'thisOrThat\')'}">
+
+        <!-- THIS OR THAT -->
+        <div class="game-card ${progression.hasPlayedToday('thisOrThat') ? 'completed' : ''}"
+             onclick="handleGameClick('thisOrThat')">
           <div class="game-icon">🤔</div>
           <h3>This or That</h3>
           <p>Guess what I would choose</p>
           <div class="game-xp">Up to 100 XP</div>
-          ${progression.hasPlayedToday('thisOrThat') ? 
-            '<div class="completed-badge">✓ Completed - Click to Review</div>' : 
-            '<div class="play-badge">Play Now</div>'
+
+          ${progression.hasPlayedToday('thisOrThat')
+            ? '<div class="completed-badge">✓ Completed – Click to Review</div>'
+            : '<div class="play-badge">Play Now</div>'
           }
         </div>
 
+        <!-- WORDLE -->
         <div class="game-card ${progression.hasPlayedToday('wordle') ? 'completed' : ''}"
-            onclick="${progression.hasPlayedToday('wordle') ? '' : "playGame('wordle')"}">
+             onclick="handleGameClick('wordle')">
           <div class="game-icon">📝</div>
           <h3>Wordle</h3>
           <p>Guess the secret word</p>
           <div class="game-xp">Up to 100 XP</div>
 
           ${progression.hasPlayedToday('wordle')
-            ? '<div class="completed-badge">✓ Completed Today</div>'
+            ? '<div class="completed-badge">✓ Completed – Click to Review</div>'
             : '<div class="play-badge">Play Now</div>'
           }
         </div>
 
-
+        <!-- NAME FOUR -->
         <div class="game-card locked">
           <div class="game-icon">🔗</div>
           <h3>Name Four</h3>
           <p>Coming soon...</p>
           <div class="game-xp">Up to 100 XP</div>
         </div>
+
       </div>
 
       <button class="rewards-btn" onclick="showRewards()">
@@ -80,11 +90,18 @@ function showHome() {
   `;
 }
 
-function playGame(gameName) {
+/* =========================
+   GAME ROUTING
+========================= */
+function handleGameClick(gameName) {
   if (progression.hasPlayedToday(gameName)) {
-    return;
+    reviewGame(gameName);
+  } else {
+    playGame(gameName);
   }
+}
 
+function playGame(gameName) {
   app.innerHTML = '<div id="game-container"></div>';
   const container = document.getElementById('game-container');
 
@@ -97,7 +114,6 @@ function playGame(gameName) {
   }
 }
 
-
 function reviewGame(gameName) {
   app.innerHTML = '<div id="game-container"></div>';
   const container = document.getElementById('game-container');
@@ -105,8 +121,15 @@ function reviewGame(gameName) {
   if (gameName === 'thisOrThat') {
     reviewTodayAnswers(container);
   }
+
+  if (gameName === 'wordle') {
+    reviewTodayWordle(container);
+  }
 }
 
+/* =========================
+   REWARDS SCREEN
+========================= */
 function showRewards() {
   const unlockedRewards = progression.getUnlockedRewards();
   const allRewards = progression.getAllRewards();
@@ -114,28 +137,25 @@ function showRewards() {
   app.innerHTML = `
     <div class="rewards-screen">
       <button class="back-btn" onclick="showHome()">← Back</button>
-      
       <h2>Your Rewards</h2>
-      
+
       <div class="rewards-list">
         ${allRewards.map(reward => {
           const unlocked = unlockedRewards.some(r => r.level === reward.level);
-          
+
           return `
             <div class="reward-item ${unlocked ? 'unlocked' : 'locked'}">
               <div class="reward-header">
                 <span class="reward-level">Level ${reward.level}</span>
                 <span class="reward-xp">${reward.xpRequired} XP</span>
               </div>
-              
+
               ${unlocked ? `
                 <h3>${reward.title}</h3>
                 <p class="reward-description">${reward.description}</p>
-                
+
                 ${reward.type === 'text' ? `
-                  <div class="reward-content">
-                    ${reward.content}
-                  </div>
+                  <div class="reward-content">${reward.content}</div>
                 ` : reward.type === 'image' ? `
                   <div class="reward-media">
                     <img src="${reward.path}" alt="${reward.title}" />
@@ -159,11 +179,14 @@ function showRewards() {
   `;
 }
 
-// Make functions globally accessible
+/* =========================
+   GLOBAL EXPORTS
+========================= */
 window.showHome = showHome;
-window.playGame = playGame;
-window.reviewGame = reviewGame;
 window.showRewards = showRewards;
+window.handleGameClick = handleGameClick;
 
-// Start the app
+/* =========================
+   BOOT
+========================= */
 showHome();
