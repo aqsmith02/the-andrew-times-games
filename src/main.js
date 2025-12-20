@@ -52,12 +52,18 @@ function showHome() {
         </div>
 
         <div class="game-card ${progression.hasPlayedToday('wordle') ? 'completed' : ''}"
-     onclick="playGame('wordle')">
+            onclick="${progression.hasPlayedToday('wordle') ? '' : "playGame('wordle')"}">
           <div class="game-icon">📝</div>
           <h3>Wordle</h3>
           <p>Guess the secret word</p>
           <div class="game-xp">Up to 100 XP</div>
+
+          ${progression.hasPlayedToday('wordle')
+            ? '<div class="completed-badge">✓ Completed Today</div>'
+            : '<div class="play-badge">Play Now</div>'
+          }
         </div>
+
 
         <div class="game-card locked">
           <div class="game-icon">🔗</div>
