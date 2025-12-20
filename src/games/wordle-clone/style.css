@@ -1,5 +1,16 @@
 /* src/games/wordle-clone/style.css */
 
+/* =========================
+   WORDLE GAME LAYOUT
+========================= */
+
+.wordle-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
 .wordle {
   display: flex;
   flex-direction: column;
@@ -18,6 +29,10 @@
   gap: 6px;
 }
 
+/* =========================
+   TILES
+========================= */
+
 .tile {
   width: 56px;
   height: 56px;
@@ -25,32 +40,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   font-size: 2rem;
   font-weight: bold;
   text-transform: uppercase;
-}
-
-.keyboard {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.key-row {
-  display: flex;
-  gap: 6px;
-}
-
-.key {
-  padding: 12px;
-  border: none;
-  background: #d3d6da;
-  font-weight: bold;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.tile {
   user-select: none;
 }
 
@@ -72,6 +65,35 @@
   color: white;
 }
 
+/* =========================
+   KEYBOARD
+========================= */
+
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.key-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.key {
+  padding: 12px;
+  border: none;
+  background: #d3d6da;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* =========================
+   MESSAGES
+========================= */
+
 .wordle-message {
   margin-top: 16px;
   padding: 12px 16px;
@@ -79,18 +101,31 @@
   color: white;
   border-radius: 6px;
   font-weight: bold;
+  text-align: center;
 }
 
+/* =========================
+   REVIEW SCREEN
+========================= */
+
 .wordle-review-grid {
-  display: grid;
-  gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   margin: 20px auto;
   width: fit-content;
 }
 
-.wordle-review-grid .row {
+/* 🔑 THIS FIXES THE VERTICAL STACKING */
+.review-row {
   display: flex;
   gap: 6px;
+  justify-content: center;
 }
 
-
+/* Slightly smaller tiles for review */
+.review-row .tile {
+  width: 44px;
+  height: 44px;
+  font-size: 1.4rem;
+}

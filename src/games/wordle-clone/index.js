@@ -33,16 +33,16 @@ export function startWordle(container) {
   };
 
   /* =========================
-     INPUT HANDLING
+     INPUT
   ========================= */
   function addLetter(letter) {
-    if (currentCol >= WORD_LENGTH) return;
+    if (currentCol >= WORD_LENGTH || gameOver) return;
     rows[currentRow].children[currentCol].textContent = letter;
     currentCol++;
   }
 
   function removeLetter() {
-    if (currentCol === 0) return;
+    if (currentCol === 0 || gameOver) return;
     currentCol--;
     rows[currentRow].children[currentCol].textContent = '';
   }
@@ -67,52 +67,39 @@ export function startWordle(container) {
   }
 
   /* =========================
-     GAME LOGIC
+     GAME LOGIC (ATOMIC)
   ========================= */
   function submitGuess() {
     const tiles = rows[currentRow].children;
-    const guess = Array.from(tiles)
-      .map(t => t.textContent)
-      .join('');
-
-    evaluateGuess(guess);
-
-    guesses.push({
-      word: guess,
-      result: Array.from(tiles).map(tile =>
-        tile.classList.contains('correct')
-          ? 'correct'
-          : tile.classList.contains('present')
-          ? 'present'
-          : 'absent'
-      )
-    });
-  }
-
-  function evaluateGuess(guess) {
+    const guess = Array.from(tiles).map(t => t.textContent).join('');
     const answerLetters = ANSWER.split('');
-    const tiles = rows[currentRow].children;
+    const result = Array(WORD_LENGTH).fill('absent');
 
-    // Pass 1: correct letters
+    // Pass 1: correct
     for (let i = 0; i < WORD_LENGTH; i++) {
       if (guess[i] === answerLetters[i]) {
         tiles[i].classList.add('correct');
+        result[i] = 'correct';
         answerLetters[i] = null;
       }
     }
 
     // Pass 2: present / absent
     for (let i = 0; i < WORD_LENGTH; i++) {
-      if (tiles[i].classList.contains('correct')) continue;
+      if (result[i] === 'correct') continue;
 
       const index = answerLetters.indexOf(guess[i]);
       if (index !== -1) {
         tiles[i].classList.add('present');
+        result[i] = 'present';
         answerLetters[index] = null;
       } else {
         tiles[i].classList.add('absent');
       }
     }
+
+    // ✅ STORE FULLY-COLORED GUESS
+    guesses.push({ word: guess, result });
 
     // WIN
     if (guess === ANSWER) {
@@ -132,6 +119,8 @@ export function startWordle(container) {
   function endGame(won) {
     gameOver = true;
 
+    progression.markPlayedToday('wordle');
+
     if (won) {
       progression.addXP(WIN_XP);
       showMessage(`🎉 You got it! +${WIN_XP} XP`);
@@ -139,14 +128,11 @@ export function startWordle(container) {
       showMessage(`😢 The word was ${ANSWER}`);
     }
 
-    progression.markPlayedToday('wordle');
-
-    // ✅ SAVE ONCE — COMPLETE DATA
     saveWordleProgress({
       date: new Date().toDateString(),
       answer: ANSWER,
       won,
-      rowsUsed: won ? currentRow + 1 : MAX_ROWS,
+      rowsUsed: guesses.length,
       guesses
     });
   }
