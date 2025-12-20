@@ -35,7 +35,6 @@ function getTodayPuzzle() {
 export function startNameFour(container) {
   const today = new Date().toDateString();
   const todayData = getTodayPuzzle();
-
   const answers = todayData.answers.map(a => a.toUpperCase());
 
   // Load saved progress
@@ -44,8 +43,7 @@ export function startNameFour(container) {
     saved?.date === today ? saved.found : []
   );
   const completedToday = saved?.date === today && saved.completed;
-
-  const guesses = [];
+  let guessCount = saved?.date === today ? saved.guessCount || 0 : 0;
 
   container.innerHTML = `
     <div class="name-four">
@@ -74,18 +72,12 @@ export function startNameFour(container) {
         <ul id="found-list"></ul>
       </div>
 
-      <div class="guesses">
-        <h4>Guesses</h4>
-        <ul id="guess-list"></ul>
-      </div>
-
       <div id="completion-message"></div>
     </div>
   `;
 
   const input = document.getElementById('guess-input');
   const foundList = document.getElementById('found-list');
-  const guessList = document.getElementById('guess-list');
   const foundCount = document.getElementById('found-count');
   const completionMessage = document.getElementById('completion-message');
 
@@ -108,9 +100,13 @@ export function startNameFour(container) {
 
     const guess = raw.toUpperCase();
     input.value = '';
+    guessCount++;
 
     // Already found
-    if (found.has(guess)) return;
+    if (found.has(guess)) {
+      persistProgress(false);
+      return;
+    }
 
     // Correct guess
     if (answers.includes(guess)) {
@@ -124,11 +120,8 @@ export function startNameFour(container) {
       return;
     }
 
-    // Wrong guess (avoid duplicates)
-    if (!guesses.includes(guess)) {
-      guesses.unshift(guess);
-      renderGuesses();
-    }
+    // Wrong guess
+    persistProgress(false);
   };
 
   /* =========================
@@ -146,16 +139,6 @@ export function startNameFour(container) {
     });
   }
 
-  function renderGuesses() {
-    guessList.innerHTML = '';
-
-    guesses.slice(0, 10).forEach(word => {
-      const li = document.createElement('li');
-      li.textContent = word;
-      guessList.appendChild(li);
-    });
-  }
-
   /* =========================
      PROGRESS
   ========================= */
@@ -163,7 +146,8 @@ export function startNameFour(container) {
     saveNameFourProgress({
       date: today,
       found: [...found],
-      completed
+      completed,
+      guessCount
     });
   }
 
@@ -184,6 +168,7 @@ export function startNameFour(container) {
       <div class="completion">
         🎉 You got all four!
         <div class="xp">+${XP_REWARD} XP</div>
+        <p>Solved in <strong>${guessCount}</strong> guesses</p>
         <p>Come back tomorrow for a new category</p>
       </div>
     `;

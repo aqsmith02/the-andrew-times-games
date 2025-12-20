@@ -5,6 +5,7 @@ import { startThisOrThat, reviewTodayAnswers } from './games/this-or-that/index.
 import { startWordle } from './games/wordle-clone/index.js';
 import { reviewTodayWordle } from './games/wordle-clone/review.js';
 import { startNameFour } from './games/name-four/index.js';
+import { reviewNameFour } from './games/name-four/review.js';
 import { progression } from './utils/progression.js';
 
 const app = document.getElementById('app');
@@ -66,7 +67,7 @@ function showHome() {
           <div class="game-icon">📝</div>
           <h3>Wordle</h3>
           <p>Guess the secret word</p>
-          <div class="game-xp">Up to 100 XP</div>
+          <div class="game-xp">100 XP</div>
 
           ${progression.hasPlayedToday('wordle')
             ? '<div class="completed-badge">✓ Completed – Click to Review</div>'
@@ -83,7 +84,7 @@ function showHome() {
           <div class="game-xp">100 XP</div>
 
           ${progression.hasPlayedToday('name-four')
-            ? '<div class="completed-badge">✓ Completed Today</div>'
+            ? '<div class="completed-badge">✓ Completed – Click to Review</div>'
             : '<div class="play-badge">Play Now</div>'
           }
         </div>
@@ -101,13 +102,6 @@ function showHome() {
    GAME ROUTING
 ========================= */
 function handleGameClick(gameName) {
-  // Name Four has NO review screen
-  if (gameName === 'name-four') {
-    if (progression.hasPlayedToday('name-four')) return;
-    playGame('name-four');
-    return;
-  }
-
   if (progression.hasPlayedToday(gameName)) {
     reviewGame(gameName);
   } else {
@@ -142,6 +136,10 @@ function reviewGame(gameName) {
 
   if (gameName === 'wordle') {
     reviewTodayWordle(container);
+  }
+
+  if (gameName === 'name-four') {
+    reviewNameFour(container);
   }
 }
 

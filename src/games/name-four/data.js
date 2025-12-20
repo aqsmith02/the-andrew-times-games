@@ -15,22 +15,62 @@ export const NAME_FOUR_PUZZLES = [
   },
   {
     category: 'Eating Combos',
-    answers: ['ketchup and rice', 'orange juice and popcorn', 'weenies and toast', 'jam and sausage']
+    answers: [
+      'ketchup and rice',
+      'orange juice and popcorn',
+      'weenies and toast',
+      'jam and sausage'
+    ]
   },
   {
     category: 'Road Names',
-    answers: ['pickle buddy ct', 'honey girl ln', 'ruby golightly dr', 'apple butter drive']
+    answers: [
+      'pickle buddy ct',
+      'honey girl ln',
+      'ruby golightly dr',
+      'apple butter drive'
+    ]
   },
   {
     category: 'Crushes',
-    answers: ['cillian murphy', 'drew starkey', 'dallas', 'chris christie']
+    answers: [
+      'cillian murphy',
+      'drew starkey',
+      'dallas',
+      'chris christie'
+    ]
   },
   {
     category: 'Lead Actors of Movies We Watched',
-    answers: ['timothee chalamet', 'harrison ford', 'dylan o brien', 'jim carrey']
+    answers: [
+      'timothee chalamet',
+      'harrison ford',
+      'dylan o brien',
+      'jim carrey'
+    ]
   },
   {
     category: 'My Spotify Wrapped Artists',
-    answers: ['radiohead', 'nat king cole', 'bobby darin', 'a tribe called quest']
+    answers: [
+      'radiohead',
+      'nat king cole',
+      'bobby darin',
+      'a tribe called quest'
+    ]
   }
 ];
+
+/**
+ * Returns today's Name Four puzzle using date-based rotation
+ */
+export function getTodayNameFourPuzzle() {
+  const startDate = new Date('2024-01-01');
+  const today = new Date();
+
+  const daysSinceStart = Math.floor(
+    (today - startDate) / (1000 * 60 * 60 * 24)
+  );
+
+  const index = daysSinceStart % NAME_FOUR_PUZZLES.length;
+  return NAME_FOUR_PUZZLES[index];
+}
