@@ -1,19 +1,19 @@
 {
   "name": "AT Games",
   "short_name": "AT Games",
-  "start_url": "/madisons-game/",
-  "scope": "/madisons-game/",
+  "start_url": "/the-andrew-times-games/",
+  "scope": "/the-andrew-times-games/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#5f8f7a",
   "icons": [
     {
-      "src": "/madisons-game/192.png",
+      "src": "/the-andrew-times-games/192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/madisons-game/512.png",
+      "src": "/the-andrew-times-games/512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
