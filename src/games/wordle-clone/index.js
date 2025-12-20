@@ -3,7 +3,7 @@
 import './style.css';
 import { renderWordleGrid } from './render.js';
 import { progression } from '../../utils/progression.js';
-import { saveWordleProgress } from './storage.js';
+import { saveWordleProgress, loadWordleProgress } from './storage.js';
 import {
   loadWordLists,
   getDailyAnswer,
@@ -15,15 +15,23 @@ const MAX_ROWS = 6;
 const WIN_XP = 100;
 
 export async function startWordle(container) {
-  // 🔑 ENSURE WORD LISTS ARE LOADED
   await loadWordLists();
 
   const ANSWER = getDailyAnswer();
+  const today = new Date().toDateString();
 
-  let currentRow = 0;
+  // Load existing progress
+  const savedProgress = loadWordleProgress();
+  const hasSavedProgress = savedProgress && 
+                          savedProgress.date === today && 
+                          savedProgress.answer === ANSWER &&
+                          !savedProgress.won &&
+                          savedProgress.rowsUsed < MAX_ROWS;
+
+  let currentRow = hasSavedProgress ? savedProgress.rowsUsed : 0;
   let currentCol = 0;
-  let gameOver = false;
-  const guesses = [];
+  let gameOver = hasSavedProgress ? false : (savedProgress && savedProgress.date === today);
+  const guesses = hasSavedProgress ? [...savedProgress.guesses] : [];
 
   container.innerHTML = `
     <div class="wordle-wrapper">
@@ -36,14 +44,49 @@ export async function startWordle(container) {
   renderWordleGrid(root);
   const rows = root.querySelectorAll('.row');
 
+  // Restore previous guesses
+  if (hasSavedProgress) {
+    guesses.forEach((guess, rowIndex) => {
+      const tiles = rows[rowIndex].children;
+      guess.word.split('').forEach((letter, colIndex) => {
+        tiles[colIndex].textContent = letter;
+        tiles[colIndex].classList.add(guess.result[colIndex]);
+      });
+    });
+  }
+
+  // If game already completed today, show completion state
+  if (gameOver && savedProgress && savedProgress.date === today) {
+    guesses.forEach((guess, rowIndex) => {
+      const tiles = rows[rowIndex].children;
+      guess.word.split('').forEach((letter, colIndex) => {
+        tiles[colIndex].textContent = letter;
+        tiles[colIndex].classList.add(guess.result[colIndex]);
+      });
+    });
+    
+    if (savedProgress.won) {
+      showMessage(`🎉 You already completed today's Wordle! +${WIN_XP} XP`);
+    } else {
+      showMessage(`😢 The word was ${ANSWER}`);
+    }
+  }
+
   document.getElementById('back-home').onclick = () => {
+    // Save progress before leaving
+    if (!gameOver && guesses.length > 0) {
+      saveWordleProgress({
+        date: today,
+        answer: ANSWER,
+        won: false,
+        rowsUsed: currentRow,
+        guesses
+      });
+    }
     cleanup();
     window.showHome();
   };
 
-  /* =========================
-     INPUT
-  ========================= */
   function addLetter(letter) {
     if (currentCol >= WORD_LENGTH || gameOver) return;
     rows[currentRow].children[currentCol].textContent = letter;
@@ -75,9 +118,6 @@ export async function startWordle(container) {
     }
   }
 
-  /* =========================
-     GAME LOGIC
-  ========================= */
   function submitGuess() {
     const tiles = rows[currentRow].children;
     const guess = Array.from(tiles).map(t => t.textContent).join('');
@@ -115,6 +155,15 @@ export async function startWordle(container) {
 
     guesses.push({ word: guess, result });
 
+    // Save progress after each guess
+    saveWordleProgress({
+      date: today,
+      answer: ANSWER,
+      won: guess === ANSWER,
+      rowsUsed: currentRow + 1,
+      guesses
+    });
+
     if (guess === ANSWER) {
       endGame(true);
       return;
@@ -139,8 +188,9 @@ export async function startWordle(container) {
       showMessage(`😢 The word was ${ANSWER}`);
     }
 
+    // Final save with completion status
     saveWordleProgress({
-      date: new Date().toDateString(),
+      date: today,
       answer: ANSWER,
       won,
       rowsUsed: guesses.length,
@@ -149,15 +199,15 @@ export async function startWordle(container) {
   }
 
   function showMessage(text) {
+    const existing = root.querySelector('.wordle-message');
+    if (existing) existing.remove();
+    
     const msg = document.createElement('div');
     msg.className = 'wordle-message';
     msg.textContent = text;
     root.appendChild(msg);
   }
 
-  /* =========================
-     EVENTS
-  ========================= */
   function handlePhysicalKeyboard(e) {
     handleKey(e.key.toUpperCase());
   }
