@@ -2,7 +2,7 @@
 
 import './style.css';
 import { progression } from '../../utils/progression.js';
-import { DAILY_NAME_FOUR } from './data.js';
+import { NAME_FOUR_PUZZLES } from './data.js';
 import {
   loadNameFourProgress,
   saveNameFourProgress
@@ -10,21 +10,31 @@ import {
 
 const XP_REWARD = 75;
 
+/* =========================
+   DAILY ROTATION
+========================= */
+function getTodayPuzzle() {
+  const startDate = new Date('2025-01-01');
+  const today = new Date();
+
+  startDate.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+
+  const diffDays = Math.floor(
+    (today - startDate) / (1000 * 60 * 60 * 24)
+  );
+
+  return NAME_FOUR_PUZZLES[
+    diffDays % NAME_FOUR_PUZZLES.length
+  ];
+}
+
+/* =========================
+   GAME START
+========================= */
 export function startNameFour(container) {
   const today = new Date().toDateString();
-  const todayKey = new Date().toISOString().slice(0, 10);
-  const todayData = DAILY_NAME_FOUR[todayKey];
-
-  if (!todayData) {
-    container.innerHTML = `
-      <div class="name-four">
-        <button class="back-btn" onclick="showHome()">← Back</button>
-        <h2>Name Four</h2>
-        <p>No puzzle available today.</p>
-      </div>
-    `;
-    return;
-  }
+  const todayData = getTodayPuzzle();
 
   const answers = todayData.answers.map(a => a.toUpperCase());
 
@@ -121,6 +131,9 @@ export function startNameFour(container) {
     }
   };
 
+  /* =========================
+     RENDERING
+  ========================= */
   function renderFound() {
     foundList.innerHTML = '';
     foundCount.textContent = found.size;
@@ -143,6 +156,9 @@ export function startNameFour(container) {
     });
   }
 
+  /* =========================
+     PROGRESS
+  ========================= */
   function persistProgress(completed) {
     saveNameFourProgress({
       date: today,
