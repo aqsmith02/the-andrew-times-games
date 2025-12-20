@@ -4,7 +4,9 @@
   "description": "A collection of mini games with progression for Madison.",
   "main": "vite.config.js",
   "scripts": {
-    "dev": "vite"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "repository": {
     "type": "git",
