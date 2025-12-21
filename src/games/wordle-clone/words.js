@@ -7,6 +7,42 @@ let loaded = false;
 // Get the base path from vite config
 const base = import.meta.env.BASE_URL || '/';
 
+/* =========================
+   SEEDED RANDOM UTILITIES
+========================= */
+
+function seededRandom(seed) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return () => {
+    h += h << 13;
+    h ^= h >>> 7;
+    h += h << 3;
+    h ^= h >>> 17;
+    h += h << 5;
+    return (h >>> 0) / 4294967296;
+  };
+}
+
+function shuffleWithSeed(array, seed) {
+  const rng = seededRandom(seed);
+  const arr = [...array];
+
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+
+  return arr;
+}
+
+/* =========================
+   LOAD WORD LISTS
+========================= */
+
 export async function loadWordLists() {
   if (loaded) return;
 
@@ -23,7 +59,13 @@ export async function loadWordLists() {
     const answersData = await answersRes.json();
     const allowedData = await allowedRes.json();
 
+    // Load answers
     ANSWERS = answersData.map(w => w.toUpperCase());
+
+    // 🔥 Deterministically shuffle answers so they feel random
+    ANSWERS = shuffleWithSeed(ANSWERS, 'wordle-v1');
+
+    // Load allowed guesses
     const allowedWords = allowedData.map(w => w.toUpperCase());
     ALLOWED = new Set([...ANSWERS, ...allowedWords]);
 
@@ -36,12 +78,16 @@ export async function loadWordLists() {
       ALLOWED.size,
       'allowed'
     );
-    console.log('First 5 answers:', ANSWERS.slice(0, 5));
+    console.log("Today's answer:", getDailyAnswer());
   } catch (error) {
     console.error('❌ Failed to load word lists:', error);
     throw error;
   }
 }
+
+/* =========================
+   VALIDATION
+========================= */
 
 export function isValidGuess(word) {
   if (!loaded) {
@@ -51,6 +97,10 @@ export function isValidGuess(word) {
   const upperWord = word.trim().toUpperCase();
   return ALLOWED.has(upperWord);
 }
+
+/* =========================
+   DAILY ANSWER
+========================= */
 
 export function getDailyAnswer() {
   if (!loaded) throw new Error('Word lists not loaded');
@@ -65,8 +115,5 @@ export function getDailyAnswer() {
   const index =
     Math.floor((today - start) / 86400000) % ANSWERS.length;
 
-  const answer = ANSWERS[index];
-  console.log("Today's answer:", answer);
-
-  return answer;
+  return ANSWERS[index];
 }
