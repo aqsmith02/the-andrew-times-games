@@ -68,17 +68,33 @@
   cursor: pointer;
   transition: all 0.2s;
   color: #1a1a1a;
+  /* Mobile-specific: prevent stuck hover states */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
-.choice-btn:hover {
-  border-color: #5f8f7a;
-  background: rgba(95, 143, 122, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(95, 143, 122, 0.25);
+/* Desktop hover only - don't apply on touch devices */
+@media (hover: hover) and (pointer: fine) {
+  .choice-btn:hover {
+    border-color: #5f8f7a;
+    background: rgba(95, 143, 122, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(95, 143, 122, 0.25);
+  }
 }
 
 .choice-btn:active {
   transform: translateY(0);
+  border-color: #5f8f7a;
+  background: rgba(95, 143, 122, 0.1);
+}
+
+/* Force reset any lingering states */
+.choice-btn:not(:active):not(:focus) {
+  border-color: #ddd;
+  background: white;
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .or-divider {
@@ -246,6 +262,7 @@
   font-weight: 600;
   transition: all 0.2s;
   margin: 10px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .review-btn,
@@ -254,10 +271,12 @@
   color: white;
 }
 
-.review-btn:hover,
-.continue-btn:hover {
-  background: #4f7f6c;
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+  .review-btn:hover,
+  .continue-btn:hover {
+    background: #4f7f6c;
+    transform: translateY(-2px);
+  }
 }
 
 .home-btn {
@@ -265,9 +284,11 @@
   color: #333;
 }
 
-.home-btn:hover {
-  background: #d0d0d0;
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+  .home-btn:hover {
+    background: #d0d0d0;
+    transform: translateY(-2px);
+  }
 }
 
 /* =========================

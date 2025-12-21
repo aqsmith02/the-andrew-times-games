@@ -4,6 +4,20 @@ import { getDailyQuestions } from './questions.js';
 import { progression } from '../../utils/progression.js';
 import './style.css';
 
+// Disable mobile tap highlight and force style recalculation
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = `
+    * {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 export class ThisOrThatGame {
   constructor(container) {
     this.container = container;
@@ -244,14 +258,26 @@ export class ThisOrThatGame {
   }
   
   attachEventListeners() {
-    // Choice buttons
+    // Choice buttons - use both click and touchend for better mobile support
     const choiceBtns = this.container.querySelectorAll('.choice-btn');
     choiceBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      // Remove any existing hover/active states
+      btn.blur();
+      
+      const handleChoice = (e) => {
         e.preventDefault();
+        e.stopPropagation();
+        
+        // Force remove any stuck hover states
+        btn.blur();
+        btn.style.pointerEvents = 'none';
+        
         const choice = btn.getAttribute('data-choice');
         this.handleAnswer(choice);
-      });
+      };
+      
+      btn.addEventListener('click', handleChoice, { once: true });
+      btn.addEventListener('touchend', handleChoice, { once: true });
     });
     
     // Back buttons
