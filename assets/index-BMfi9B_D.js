@@ -161,7 +161,7 @@ You can write something sweet 💕`,description:"A special poem written just for
         `).join("")}
       </div>
     </div>
-  `}const G="wordle_progress";function O(s){localStorage.setItem(G,JSON.stringify(s))}function F(){const s=localStorage.getItem(G);return s?JSON.parse(s):null}let y=[],N=new Set,R=!1;const I="/the-andrew-times-games/";function te(s){let e=2166136261;for(let t=0;t<s.length;t++)e^=s.charCodeAt(t),e=Math.imul(e,16777619);return()=>(e+=e<<13,e^=e>>>7,e+=e<<3,e^=e>>>17,e+=e<<5,(e>>>0)/4294967296)}function se(s,e){const t=te(e),o=[...s];for(let i=o.length-1;i>0;i--){const n=Math.floor(t()*(i+1));[o[i],o[n]]=[o[n],o[i]]}return o}async function oe(){if(!R)try{const[s,e]=await Promise.all([fetch(`${I}wordle-data/answers.json`),fetch(`${I}wordle-data/allowed.json`)]);if(!s.ok||!e.ok)throw new Error("Failed to load word list files");const t=await s.json(),o=await e.json();y=t.map(n=>n.toUpperCase()),y=se(y,"wordle-v1");const i=o.map(n=>n.toUpperCase());N=new Set([...y,...i]),R=!0,console.log("✅ Word lists loaded:",y.length,"answers,",N.size,"allowed"),console.log("Today's answer:",_())}catch(s){throw console.error("❌ Failed to load word lists:",s),s}}function ne(s){if(!R)return console.warn("Word lists not loaded yet"),!1;const e=s.trim().toUpperCase();return N.has(e)}function _(){if(!R)throw new Error("Word lists not loaded");if(y.length===0)throw new Error("No answers loaded");const s=new Date("2021-06-19"),e=new Date;s.setHours(0,0,0,0),e.setHours(0,0,0,0);const t=Math.floor((e-s)/864e5)%y.length;return y[t]}const $=5,q=6,E=100;async function ie(s){await oe();const e=_(),t=new Date().toDateString(),o=F(),i=o&&o.date===t&&o.answer===e&&!o.won&&o.rowsUsed<q;let n=i?o.rowsUsed:0,r=0,h=i?!1:o&&o.date===t;const w=i?[...o.guesses]:[];s.innerHTML=`
+  `}const _="wordle_progress";function O(s){localStorage.setItem(_,JSON.stringify(s))}function F(){const s=localStorage.getItem(_);return s?JSON.parse(s):null}let y=[],E=new Set,R=!1;const I="/the-andrew-times-games/";function te(s){let e=2166136261;for(let t=0;t<s.length;t++)e^=s.charCodeAt(t),e=Math.imul(e,16777619);return()=>(e+=e<<13,e^=e>>>7,e+=e<<3,e^=e>>>17,e+=e<<5,(e>>>0)/4294967296)}function se(s,e){const t=te(e),o=[...s];for(let i=o.length-1;i>0;i--){const n=Math.floor(t()*(i+1));[o[i],o[n]]=[o[n],o[i]]}return o}async function oe(){if(!R)try{const[s,e]=await Promise.all([fetch(`${I}wordle-data/answers.json`),fetch(`${I}wordle-data/allowed.json`)]);if(!s.ok||!e.ok)throw new Error("Failed to load word list files");const t=await s.json(),o=await e.json();y=t.map(n=>n.toUpperCase()),y=se(y,"wordle-v1");const i=o.map(n=>n.toUpperCase());E=new Set([...y,...i]),R=!0,console.log("✅ Word lists loaded:",y.length,"answers,",E.size,"allowed"),console.log("Today's answer:",G())}catch(s){throw console.error("❌ Failed to load word lists:",s),s}}function ne(s){if(!R)return console.warn("Word lists not loaded yet"),!1;const e=s.trim().toUpperCase();return E.has(e)}function G(){if(!R)throw new Error("Word lists not loaded");if(y.length===0)throw new Error("No answers loaded");const s=new Date("2021-06-19"),e=new Date;s.setHours(0,0,0,0),e.setHours(0,0,0,0);const t=Math.floor((e-s)/864e5)%y.length;return y[t]}const $=5,q=6,N=100;async function ie(s){await oe();const e=G(),t=new Date().toDateString(),o=F(),i=o&&o.date===t&&o.answer===e&&!o.won&&o.rowsUsed<q;let n=i?o.rowsUsed:0,r=0,h=i?!1:o&&o.date===t;const w=i?[...o.guesses]:[];s.innerHTML=`
     <div class="wordle-wrapper">
 
       <div class="wordle-header">
@@ -175,11 +175,11 @@ You can write something sweet 💕`,description:"A special poem written just for
     <div class="mobile-back-bar">
       <button class="mobile-back-btn" id="mobile-back-home">← Back</button>
     </div>
-  `;const p=document.getElementById("wordle-root");ee(p);const g=p.querySelectorAll(".row");i&&w.forEach((a,d)=>{const c=g[d].children;a.word.split("").forEach((m,l)=>{c[l].textContent=m,c[l].classList.add(a.result[l])})}),h&&o&&o.date===t&&(w.forEach((a,d)=>{const c=g[d].children;a.word.split("").forEach((m,l)=>{c[l].textContent=m,c[l].classList.add(a.result[l])})}),o.won?f(`🎉 You already completed today's Wordle! +${E} XP`):f(`😢 The word was ${e}`));const B=()=>{!h&&w.length>0&&O({date:t,answer:e,won:!1,rowsUsed:n,guesses:w}),b(),window.showHome()};document.getElementById("back-home").onclick=B,document.getElementById("mobile-back-home").onclick=B;function L(a){r>=$||h||(g[n].children[r].textContent=a,r++)}function T(){r===0||h||(r--,g[n].children[r].textContent="")}function S(a){if(!h){if(a==="ENTER"){if(r!==$)return;A();return}if(a==="⌫"||a==="BACKSPACE"){T();return}/^[A-Z]$/.test(a)&&L(a)}}function A(){const a=g[n].children,d=Array.from(a).map(l=>l.textContent).join("");if(!ne(d)){f("⌫ Not in word list");return}const c=e.split(""),m=Array($).fill("absent");for(let l=0;l<$;l++)d[l]===c[l]&&(a[l].classList.add("correct"),m[l]="correct",c[l]=null);for(let l=0;l<$;l++){if(m[l]==="correct")continue;const H=c.indexOf(d[l]);H!==-1?(a[l].classList.add("present"),m[l]="present",c[H]=null):a[l].classList.add("absent")}if(w.push({word:d,result:m}),O({date:t,answer:e,won:d===e,rowsUsed:n+1,guesses:w}),d===e){P(!0);return}n++,r=0,n===q&&P(!1)}function P(a){if(h=!0,u.markPlayedToday("wordle"),a){const d=u.addXP(E);let c=`🎉 You got it! +${E} XP`;d.leveledUp&&d.newRewards.length>0&&(c+=`
+  `;const v=document.getElementById("wordle-root");ee(v);const g=v.querySelectorAll(".row");i&&w.forEach((a,d)=>{const c=g[d].children;a.word.split("").forEach((m,l)=>{c[l].textContent=m,c[l].classList.add(a.result[l])})}),h&&o&&o.date===t&&(w.forEach((a,d)=>{const c=g[d].children;a.word.split("").forEach((m,l)=>{c[l].textContent=m,c[l].classList.add(a.result[l])})}),o.won?f(`🎉 You already completed today's Wordle! +${N} XP`):f(`😢 The word was ${e}`));const B=()=>{!h&&w.length>0&&O({date:t,answer:e,won:!1,rowsUsed:n,guesses:w}),b(),window.showHome()};document.getElementById("back-home").onclick=B,document.getElementById("mobile-back-home").onclick=B;function L(a){r>=$||h||(g[n].children[r].textContent=a,r++)}function T(){r===0||h||(r--,g[n].children[r].textContent="")}function S(a){if(!h){if(a==="ENTER"){if(r!==$)return;A();return}if(a==="⌫"||a==="BACKSPACE"){T();return}/^[A-Z]$/.test(a)&&L(a)}}function A(){const a=g[n].children,d=Array.from(a).map(l=>l.textContent).join("");if(!ne(d)){f("⌫ Not in word list");return}const c=e.split(""),m=Array($).fill("absent");for(let l=0;l<$;l++)d[l]===c[l]&&(a[l].classList.add("correct"),m[l]="correct",c[l]=null);for(let l=0;l<$;l++){if(m[l]==="correct")continue;const H=c.indexOf(d[l]);H!==-1?(a[l].classList.add("present"),m[l]="present",c[H]=null):a[l].classList.add("absent")}if(w.push({word:d,result:m}),O({date:t,answer:e,won:d===e,rowsUsed:n+1,guesses:w}),d===e){P(!0);return}n++,r=0,n===q&&P(!1)}function P(a){if(h=!0,u.markPlayedToday("wordle"),a){const d=u.addXP(N);let c=`🎉 You got it! +${N} XP`;d.leveledUp&&d.newRewards.length>0&&(c+=`
 
 🎉 LEVEL UP! 🎉
 `,d.newRewards.forEach(m=>{c+=`
-Unlocked: ${m.title}`})),f(c)}else f(`😢 The word was ${e}`);O({date:t,answer:e,won:a,rowsUsed:w.length,guesses:w})}function f(a){const d=p.querySelector(".wordle-message");d&&d.remove();const c=document.createElement("div");c.className="wordle-message",c.textContent=a,p.appendChild(c)}function v(a){S(a.key.toUpperCase())}window.addEventListener("keydown",v),p.querySelectorAll(".key").forEach(a=>{a.addEventListener("click",()=>S(a.textContent))});function b(){window.removeEventListener("keydown",v)}}function ae(s){const e=new Date().toDateString(),t=F();if(!t||t.date!==e){s.innerHTML=`
+Unlocked: ${m.title}`})),f(c)}else f(`😢 The word was ${e}`);O({date:t,answer:e,won:a,rowsUsed:w.length,guesses:w})}function f(a){const d=v.querySelector(".wordle-message");d&&d.remove();const c=document.createElement("div");c.className="wordle-message",c.textContent=a,v.appendChild(c)}function p(a){S(a.key.toUpperCase())}window.addEventListener("keydown",p),v.querySelectorAll(".key").forEach(a=>{a.addEventListener("click",()=>S(a.textContent))});function b(){window.removeEventListener("keydown",p)}}function ae(s){const e=new Date().toDateString(),t=F();if(!t||t.date!==e){s.innerHTML=`
       <div class="review-screen">
         <button class="back-btn" onclick="showHome()">← Back</button>
         <h2>No Results Yet</h2>
@@ -217,7 +217,7 @@ Unlocked: ${m.title}`})),f(c)}else f(`😢 The word was ${e}`);O({date:t,answer:
     <div class="mobile-back-bar">
       <button class="mobile-back-btn" onclick="showHome()">← Back</button>
     </div>
-  `}const C=[{category:"Nicknames",answers:["beanie","boobie","munt","tony"]},{category:"Favorite 80s Rock Bands",answers:["the smiths","talking heads","misfits","queen"]},{category:"In Your Room",answers:["box fan","john lennon poster","vision board","wallpaper"]},{category:"Food Combos",answers:["ketchup and rice","orange juice and popcorn","weenies and toast","jam and sausage"]},{category:"Road Names",answers:["pickle buddy court","honey girl lane","ruby golightly drive","apple butter drive"]},{category:"Crushes",answers:["cillian murphy","drew starkey","dallas","chris christie"]},{category:"Lead Actors of Movies We Watched",answers:["timothee chalamet","harrison ford","dylan o'brien","jim carrey"]},{category:"My Spotify Wrapped Artists",answers:["radiohead","nat king cole","bobby darin","a tribe called quest"]}],j="name_four_progress";function re(s){localStorage.setItem(j,JSON.stringify(s))}function Q(){const s=localStorage.getItem(j);return s?JSON.parse(s):null}const D=25;function le(){const s=new Date("2025-01-01"),e=new Date;s.setHours(0,0,0,0),e.setHours(0,0,0,0);const t=Math.floor((e-s)/(1e3*60*60*24));return C[t%C.length]}function ce(s){const e=new Date().toDateString(),t=le(),o=t.answers.map(v=>v.toUpperCase()),i=Q(),n=new Set(i?.date===e?i.found||[]:[]),r=new Set(i?.date===e?i.revealed||[]:[]);let h=i?.date===e&&i.guessCount||0,w=i?.date===e&&i.xpAwarded||0,p=i?.date===e&&i.completed;s.innerHTML=`
+  `}const C=[{category:"Nicknames",answers:["beanie","boobie","munt","tony"]},{category:"Favorite 80s Rock Bands",answers:["the smiths","talking heads","misfits","queen"]},{category:"In Your Room",answers:["box fan","john lennon poster","vision board","wallpaper"]},{category:"Food Combos",answers:["ketchup and rice","orange juice and popcorn","weenies and toast","jam and sausage"]},{category:"Road Names",answers:["pickle buddy court","honey girl lane","ruby golightly drive","apple butter drive"]},{category:"Crushes",answers:["cillian murphy","drew starkey","dallas","chris christie"]},{category:"Lead Actors of Movies We Watched",answers:["timothee chalamet","harrison ford","dylan o'brien","jim carrey"]},{category:"My Spotify Wrapped Artists",answers:["radiohead","nat king cole","bobby darin","a tribe called quest"]}],j="name_four_progress";function re(s){localStorage.setItem(j,JSON.stringify(s))}function Q(){const s=localStorage.getItem(j);return s?JSON.parse(s):null}const D=25;function le(){const s=new Date("2025-01-01"),e=new Date;s.setHours(0,0,0,0),e.setHours(0,0,0,0);const t=Math.floor((e-s)/(1e3*60*60*24));return C[t%C.length]}function ce(s){const e=new Date().toDateString(),t=le(),o=t.answers.map(p=>p.toUpperCase()),i=Q(),n=new Set(i?.date===e?i.found||[]:[]),r=new Set(i?.date===e?i.revealed||[]:[]);let h=i?.date===e&&i.guessCount||0,w=i?.date===e&&i.xpAwarded||0,v=i?.date===e&&i.completed;s.innerHTML=`
     <div class="name-four">
       <button class="back-btn" id="back-home">← Back</button>
 
@@ -234,9 +234,9 @@ Unlocked: ${m.title}`})),f(c)}else f(`😢 The word was ${e}`);O({date:t,answer:
           type="text"
           placeholder="Type a guess..."
           autocomplete="off"
-          ${p?"disabled":""}
+          ${v?"disabled":""}
         />
-        <button type="submit" ${p?"disabled":""}>
+        <button type="submit" ${v?"disabled":""}>
           Submit
         </button>
       </form>
@@ -247,7 +247,7 @@ Unlocked: ${m.title}`})),f(c)}else f(`😢 The word was ${e}`);O({date:t,answer:
     <div class="mobile-back-bar">
       <button class="mobile-back-btn" id="mobile-back-home">← Back</button>
     </div>
-  `;const g=document.getElementById("guess-input"),B=document.getElementById("answer-grid"),L=document.getElementById("completion-message");document.getElementById("back-home").onclick=()=>window.showHome(),document.getElementById("mobile-back-home").onclick=()=>window.showHome(),T(),p&&f(),document.getElementById("guess-form").onsubmit=v=>{if(v.preventDefault(),p)return;const b=g.value.trim();if(!b)return;const a=b.toUpperCase();if(g.value="",h++,n.has(a)||r.has(a)){A();return}o.includes(a)&&(n.add(a),S(),T(),n.size+r.size===4&&P()),A()};function T(){B.innerHTML="",o.forEach(v=>{const b=n.has(v)||r.has(v),a=document.createElement("div");a.className=`answer-box ${b?"solved":""}`;const d=document.createElement("div");if(d.className="answer-text",d.textContent=b?v:v.replace(/[A-Z]/gi,"_"),a.appendChild(d),!b&&!p){const c=document.createElement("button");c.className="reveal-single-btn",c.textContent="Reveal",c.onclick=()=>{r.add(v),T(),n.size+r.size===4&&P(),A()},a.appendChild(c)}B.appendChild(a)})}function S(){w+=D,u.addXP(D)}function A(v=!1){re({date:e,found:[...n],revealed:[...r],completed:v||p,guessCount:h,xpAwarded:w})}function P(){p=!0,u.markPlayedToday("name-four"),g.disabled=!0,document.querySelector("#guess-form button").disabled=!0,A(!0),f()}function f(){L.innerHTML=`
+  `;const g=document.getElementById("guess-input"),B=document.getElementById("answer-grid"),L=document.getElementById("completion-message");document.getElementById("back-home").onclick=()=>window.showHome(),document.getElementById("mobile-back-home").onclick=()=>window.showHome(),T(),v&&f(),document.getElementById("guess-form").onsubmit=p=>{if(p.preventDefault(),v)return;const b=g.value.trim();if(!b)return;const a=b.toUpperCase();if(g.value="",h++,n.has(a)||r.has(a)){A();return}o.includes(a)&&(n.add(a),S(),T(),n.size+r.size===4&&P()),A()};function T(){B.innerHTML="",o.forEach(p=>{const b=n.has(p)||r.has(p),a=document.createElement("div");a.className=`answer-box ${b?"solved":""}`;const d=document.createElement("div");if(d.className="answer-text",d.textContent=b?p:p.replace(/[A-Z]/gi,"_"),a.appendChild(d),!b&&!v){const c=document.createElement("button");c.className="reveal-single-btn",c.textContent="Reveal",c.onclick=()=>{r.add(p),T(),n.size+r.size===4&&P(),A()},a.appendChild(c)}B.appendChild(a)})}function S(){w+=D,u.addXP(D)}function A(p=!1){re({date:e,found:[...n],revealed:[...r],completed:p||v,guessCount:h,xpAwarded:w})}function P(){v=!0,u.markPlayedToday("name-four"),g.disabled=!0,document.querySelector("#guess-form button").disabled=!0,A(!0),f()}function f(){L.innerHTML=`
       <div class="completion">
         🎉 Puzzle complete
         <div class="xp">+${w} XP</div>
@@ -339,7 +339,9 @@ Unlocked: ${m.title}`})),f(c)}else f(`😢 The word was ${e}`);O({date:t,answer:
         <!-- THIS OR THAT -->
         <div class="game-card ${u.hasPlayedToday("thisOrThat")?"completed":""}"
              onclick="handleGameClick('thisOrThat')">
-          <div class="game-icon">🤔</div>
+          <div class="game-icon">
+            <img src="/game-icons/this_or_that_192.png" alt="This or That" />
+          </div>
           <h3>This or That</h3>
           <p>Guess what I would choose</p>
           <div class="game-xp">Up to 100 XP</div>
@@ -350,7 +352,9 @@ Unlocked: ${m.title}`})),f(c)}else f(`😢 The word was ${e}`);O({date:t,answer:
         <!-- WORDLE -->
         <div class="game-card ${u.hasPlayedToday("wordle")?"completed":""}"
              onclick="handleGameClick('wordle')">
-          <div class="game-icon">📝</div>
+          <div class="game-icon">
+            <img src="/game-icons/wordle_clone_192.png" alt="Wordle" />
+          </div>
           <h3>Wordle</h3>
           <p>Guess the secret word</p>
           <div class="game-xp">100 XP</div>
@@ -361,7 +365,9 @@ Unlocked: ${m.title}`})),f(c)}else f(`😢 The word was ${e}`);O({date:t,answer:
         <!-- NAME FOUR -->
         <div class="game-card ${u.hasPlayedToday("name-four")?"completed":""}"
              onclick="handleGameClick('name-four')">
-          <div class="game-icon">🔢</div>
+          <div class="game-icon">
+            <img src="/game-icons/name_four_192.png" alt="Name Four" />
+          </div>
           <h3>Name Four</h3>
           <p>Find the four that belong together</p>
           <div class="game-xp">100 XP</div>
@@ -375,7 +381,7 @@ Unlocked: ${m.title}`})),f(c)}else f(`😢 The word was ${e}`);O({date:t,answer:
         View Rewards & Progress
       </button>
     </div>
-  `}async function he(s){u.hasPlayedToday(s)?pe(s):await ve(s)}async function ve(s){x.innerHTML='<div id="game-container"></div>';const e=document.getElementById("game-container");s==="thisOrThat"&&W(e),s==="wordle"&&await ie(e),s==="name-four"&&ce(e)}function pe(s){x.innerHTML='<div id="game-container"></div>';const e=document.getElementById("game-container");s==="thisOrThat"&&U(e),s==="wordle"&&ae(e),s==="name-four"&&ue(e)}function we(){const s=u.getUnlockedRewards(),e=u.getAllRewards();x.innerHTML=`
+  `}async function he(s){u.hasPlayedToday(s)?ve(s):await pe(s)}async function pe(s){x.innerHTML='<div id="game-container"></div>';const e=document.getElementById("game-container");s==="thisOrThat"&&W(e),s==="wordle"&&await ie(e),s==="name-four"&&ce(e)}function ve(s){x.innerHTML='<div id="game-container"></div>';const e=document.getElementById("game-container");s==="thisOrThat"&&U(e),s==="wordle"&&ae(e),s==="name-four"&&ue(e)}function we(){const s=u.getUnlockedRewards(),e=u.getAllRewards();x.innerHTML=`
     <div class="rewards-screen">
       <button class="back-btn" onclick="showHome()">← Back</button>
       <h2>Your Rewards</h2>
