@@ -51,7 +51,7 @@ function showHome() {
         <div class="game-card ${progression.hasPlayedToday('thisOrThat') ? 'completed' : ''}"
              onclick="handleGameClick('thisOrThat')">
           <div class="game-icon">
-            <img src="/game-icons/this_or_that_192.png" alt="This or That" />
+            <img src="./game-icons/this_or_that_192.png" alt="This or That" />
           </div>
           <h3>This or That</h3>
           <p>Guess what I would choose</p>
@@ -67,7 +67,7 @@ function showHome() {
         <div class="game-card ${progression.hasPlayedToday('wordle') ? 'completed' : ''}"
              onclick="handleGameClick('wordle')">
           <div class="game-icon">
-            <img src="/game-icons/wordle_clone_192.png" alt="Wordle" />
+            <img src="./game-icons/wordle_clone_192.png" alt="Wordle" />
           </div>
           <h3>Wordle</h3>
           <p>Guess the secret word</p>
@@ -83,7 +83,7 @@ function showHome() {
         <div class="game-card ${progression.hasPlayedToday('name-four') ? 'completed' : ''}"
              onclick="handleGameClick('name-four')">
           <div class="game-icon">
-            <img src="/game-icons/name_four_192.png" alt="Name Four" />
+            <img src="./game-icons/name_four_192.png" alt="Name Four" />
           </div>
           <h3>Name Four</h3>
           <p>Find the four that belong together</p>
