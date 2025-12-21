@@ -152,13 +152,17 @@ export class ThisOrThatGame {
           Total XP: ${progressionData.totalXP} 
           <span class="level-badge">Level ${progressionData.currentLevel}</span>
         </div>
-        <button class="review-btn" onclick="reviewThisOrThat()">
-          Review Answers
-        </button>
+        <button class="review-btn">Review Answers</button>
       </div>
     `;
 
     this.container.querySelector('.game-content').innerHTML = content;
+    
+    // Add event listener for review button
+    const reviewBtn = this.container.querySelector('.review-btn');
+    if (reviewBtn) {
+      reviewBtn.addEventListener('click', () => this.showReview());
+    }
   }
 
   showReview() {
@@ -180,11 +184,17 @@ export class ThisOrThatGame {
             </div>
           `).join('')}
         </div>
-        <button class="home-btn" onclick="showHome()">Back to Home</button>
+        <button class="home-btn">Back to Home</button>
       </div>
     `;
 
     this.container.querySelector('.game-content').innerHTML = content;
+    
+    // Add event listener for home button
+    const homeBtn = this.container.querySelector('.home-btn');
+    if (homeBtn) {
+      homeBtn.addEventListener('click', () => window.showHome());
+    }
   }
 
   render() {
@@ -200,7 +210,7 @@ export class ThisOrThatGame {
     this.container.innerHTML = `
       <div class="this-or-that-game">
         <div class="game-header">
-          <button class="back-btn" onclick="showHome()">← Back</button>
+          <button class="back-btn">← Back</button>
           <h2>This or That</h2>
           <div class="progress-indicator">
             Question ${this.currentQuestionIndex + 1} / ${this.questions.length}
@@ -211,13 +221,13 @@ export class ThisOrThatGame {
           <div class="question-prompt">Which would I choose?</div>
           
           <div class="choices">
-            <button class="choice-btn choice-a" onclick="thisOrThat.handleAnswer('A')">
+            <button class="choice-btn choice-a" data-choice="A">
               ${question.optionA}
             </button>
             
             <div class="or-divider">OR</div>
             
-            <button class="choice-btn choice-b" onclick="thisOrThat.handleAnswer('B')">
+            <button class="choice-btn choice-b" data-choice="B">
               ${question.optionB}
             </button>
           </div>
@@ -225,9 +235,30 @@ export class ThisOrThatGame {
       </div>
 
       <div class="mobile-back-bar">
-        <button class="mobile-back-btn" onclick="showHome()">← Back</button>
+        <button class="mobile-back-btn">← Back</button>
       </div>
     `;
+    
+    // Add fresh event listeners
+    this.attachEventListeners();
+  }
+  
+  attachEventListeners() {
+    // Choice buttons
+    const choiceBtns = this.container.querySelectorAll('.choice-btn');
+    choiceBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const choice = btn.getAttribute('data-choice');
+        this.handleAnswer(choice);
+      });
+    });
+    
+    // Back buttons
+    const backBtns = this.container.querySelectorAll('.back-btn, .mobile-back-btn');
+    backBtns.forEach(btn => {
+      btn.addEventListener('click', () => window.showHome());
+    });
   }
 }
 
@@ -246,15 +277,16 @@ export function reviewTodayAnswers(container) {
   if (!saved) {
     container.innerHTML = `
       <div class="review-screen">
-        <button class="back-btn" onclick="showHome()">← Back</button>
+        <button class="back-btn">← Back</button>
         <h2>No Results Yet</h2>
         <p style="text-align: center; color: #666;">Play today's This or That game first!</p>
       </div>
 
       <div class="mobile-back-bar">
-        <button class="mobile-back-btn" onclick="showHome()">← Back</button>
+        <button class="mobile-back-btn">← Back</button>
       </div>
     `;
+    attachReviewBackListeners(container);
     return;
   }
 
@@ -263,7 +295,7 @@ export function reviewTodayAnswers(container) {
     const answeredCount = data.answers?.length || 0;
     container.innerHTML = `
       <div class="review-screen">
-        <button class="back-btn" onclick="showHome()">← Back</button>
+        <button class="back-btn">← Back</button>
         <h2>${answeredCount > 0 ? 'In Progress' : 'No Results Yet'}</h2>
         <p style="text-align: center; color: #666;">
           ${answeredCount > 0 
@@ -271,22 +303,26 @@ export function reviewTodayAnswers(container) {
             : 'Complete today\'s This or That game first!'}
         </p>
         ${answeredCount > 0 ? `
-          <button class="continue-btn" onclick="startThisOrThatFromMenu()">
-            Continue Game
-          </button>
+          <button class="continue-btn">Continue Game</button>
         ` : ''}
       </div>
 
       <div class="mobile-back-bar">
-        <button class="mobile-back-btn" onclick="showHome()">← Back</button>
+        <button class="mobile-back-btn">← Back</button>
       </div>
     `;
+    attachReviewBackListeners(container);
+    
+    const continueBtn = container.querySelector('.continue-btn');
+    if (continueBtn) {
+      continueBtn.addEventListener('click', () => startThisOrThat(container));
+    }
     return;
   }
 
   const content = `
     <div class="review-screen">
-      <button class="back-btn" onclick="showHome()">← Back</button>
+      <button class="back-btn">← Back</button>
       <h2>Today's This or That Review</h2>
       <div class="review-score">Score: ${data.score} / 100 XP</div>
       <div class="review-list">
@@ -307,11 +343,20 @@ export function reviewTodayAnswers(container) {
     </div>
 
     <div class="mobile-back-bar">
-      <button class="mobile-back-btn" onclick="showHome()">← Back</button>
+      <button class="mobile-back-btn">← Back</button>
     </div>
   `;
 
   container.innerHTML = content;
+  attachReviewBackListeners(container);
+}
+
+// Helper function to attach back button listeners
+function attachReviewBackListeners(container) {
+  const backBtns = container.querySelectorAll('.back-btn, .mobile-back-btn');
+  backBtns.forEach(btn => {
+    btn.addEventListener('click', () => window.showHome());
+  });
 }
 
 // Global function to trigger review
