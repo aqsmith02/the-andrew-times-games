@@ -58,6 +58,8 @@ export class ThisOrThatGame {
     
     if (correct) {
       this.score += 20;
+      // Award XP immediately after each correct answer
+      progression.addXP(20);
     }
 
     // Save progress after each answer
@@ -99,14 +101,17 @@ export class ThisOrThatGame {
     this.isComplete = true;
     this.saveProgress(true);
     
-    // Add XP to progression system
-    const result = progression.addXP(this.score);
+    // Mark as played today (XP already awarded after each answer)
     progression.markPlayedToday('thisOrThat');
     
-    this.showCompletionScreen(result);
+    // Get current progression state for display
+    const currentLevel = progression.getCurrentLevel();
+    const totalXP = progression.getTotalXP();
+    
+    this.showCompletionScreen({ currentLevel, totalXP });
   }
 
-  showCompletionScreen(result) {
+  showCompletionScreen(progressionData) {
     const percentage = (this.score / 100) * 100;
     
     let content = `
@@ -121,24 +126,10 @@ export class ThisOrThatGame {
         </div>
     `;
 
-    if (result.leveledUp && result.newRewards.length > 0) {
-      content += `
-        <div class="level-up">
-          <div class="level-up-banner">🎉 LEVEL UP! 🎉</div>
-          ${result.newRewards.map(reward => `
-            <div class="new-reward">
-              <strong>${reward.title}</strong>
-              <p>${reward.description}</p>
-            </div>
-          `).join('')}
-        </div>
-      `;
-    }
-
     content += `
         <div class="total-progress">
-          Total XP: ${progression.getTotalXP()} 
-          <span class="level-badge">Level ${progression.getCurrentLevel()}</span>
+          Total XP: ${progressionData.totalXP} 
+          <span class="level-badge">Level ${progressionData.currentLevel}</span>
         </div>
         <button class="review-btn" onclick="reviewThisOrThat()">
           Review Answers
@@ -177,7 +168,9 @@ export class ThisOrThatGame {
 
   render() {
     if (this.isComplete) {
-      this.showCompletionScreen({ leveledUp: false });
+      const currentLevel = progression.getCurrentLevel();
+      const totalXP = progression.getTotalXP();
+      this.showCompletionScreen({ currentLevel, totalXP });
       return;
     }
 
