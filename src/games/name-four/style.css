@@ -19,6 +19,57 @@
 }
 
 /* =========================
+   ANSWER GRID
+========================= */
+
+.answer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.answer-box {
+  background: #f3f4f6;
+  padding: 14px 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #6b7280;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.answer-box.solved {
+  background: #6aaa64;
+  color: white;
+}
+
+.answer-text {
+  font-size: 1rem;
+  word-break: break-word;
+}
+
+.reveal-single-btn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.reveal-single-btn:hover {
+  text-decoration: underline;
+}
+
+.answer-box.solved .reveal-single-btn {
+  display: none;
+}
+
+/* =========================
    GUESS FORM
 ========================= */
 
@@ -58,74 +109,18 @@
 }
 
 /* =========================
-   FOUND SECTION
-========================= */
-
-.found {
-  margin-bottom: 24px;
-}
-
-.found ul {
-  list-style: none;
-  padding: 0;
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-
-.found-item {
-  background: #6aaa64;
-  color: white;
-  padding: 10px;
-  border-radius: 6px;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-/* =========================
-   GUESSES LIST
-========================= */
-
-.guesses {
-  margin-bottom: 24px;
-}
-
-.guesses h4 {
-  margin-bottom: 8px;
-  font-size: 1rem;
-  color: #666;
-}
-
-.guesses ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.guesses li {
-  padding: 6px 0;
-  font-size: 0.95rem;
-  color: #999;
-  text-transform: uppercase;
-}
-
-/* =========================
-   COMPLETION
+   COMPLETION MESSAGE
 ========================= */
 
 .completion {
   margin-top: 24px;
   padding: 20px;
   border-radius: 10px;
-
   background: white;
   color: #111827;
-
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   border: 2px solid #e5e7eb;
 }
-
 
 .completion .xp {
   margin-top: 8px;
@@ -162,12 +157,6 @@
   font-size: 1.6rem;
   margin-bottom: 16px;
   color: #111827;
-}
-
-.category {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #4b5563;
 }
 
 .answers {

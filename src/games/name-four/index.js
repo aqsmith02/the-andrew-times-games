@@ -8,7 +8,7 @@ import {
   saveNameFourProgress
 } from './storage.js';
 
-const XP_REWARD = 100;
+const XP_PER_ANSWER = 25;
 
 /* =========================
    DAILY ROTATION
@@ -34,16 +34,22 @@ function getTodayPuzzle() {
 ========================= */
 export function startNameFour(container) {
   const today = new Date().toDateString();
-  const todayData = getTodayPuzzle();
-  const answers = todayData.answers.map(a => a.toUpperCase());
+  const puzzle = getTodayPuzzle();
+  const answers = puzzle.answers.map(a => a.toUpperCase());
 
-  // Load saved progress
   const saved = loadNameFourProgress();
+
   const found = new Set(
-    saved?.date === today ? saved.found : []
+    saved?.date === today ? saved.found || [] : []
   );
-  const completedToday = saved?.date === today && saved.completed;
+
+  const revealed = new Set(
+    saved?.date === today ? saved.revealed || [] : []
+  );
+
   let guessCount = saved?.date === today ? saved.guessCount || 0 : 0;
+  let xpAwarded = saved?.date === today ? saved.xpAwarded || 0 : 0;
+  let completed = saved?.date === today && saved.completed;
 
   container.innerHTML = `
     <div class="name-four">
@@ -51,8 +57,10 @@ export function startNameFour(container) {
 
       <h2>Name Four</h2>
       <div class="category">
-        Category: <strong>${todayData.category}</strong>
+        Category: <strong>${puzzle.category}</strong>
       </div>
+
+      <div class="answer-grid" id="answer-grid"></div>
 
       <form id="guess-form" class="guess-form">
         <input
@@ -60,17 +68,12 @@ export function startNameFour(container) {
           type="text"
           placeholder="Type a guess..."
           autocomplete="off"
-          ${completedToday ? 'disabled' : ''}
+          ${completed ? 'disabled' : ''}
         />
-        <button type="submit" ${completedToday ? 'disabled' : ''}>
+        <button type="submit" ${completed ? 'disabled' : ''}>
           Submit
         </button>
       </form>
-
-      <div class="found">
-        Found (<span id="found-count">0</span> / 4)
-        <ul id="found-list"></ul>
-      </div>
 
       <div id="completion-message"></div>
     </div>
@@ -81,27 +84,22 @@ export function startNameFour(container) {
   `;
 
   const input = document.getElementById('guess-input');
-  const foundList = document.getElementById('found-list');
-  const foundCount = document.getElementById('found-count');
+  const grid = document.getElementById('answer-grid');
   const completionMessage = document.getElementById('completion-message');
 
-  document.getElementById('back-home').onclick = () => {
-    window.showHome();
-  };
+  document.getElementById('back-home').onclick = () => window.showHome();
+  document.getElementById('mobile-back-home').onclick = () => window.showHome();
 
-  document.getElementById('mobile-back-home').onclick = () => {
-    window.showHome();
-  };
+  renderGrid();
 
-  renderFound();
+  if (completed) showCompletionMessage();
 
-  if (completedToday) {
-    showCompletedMessage();
-  }
-
+  /* =========================
+     GUESS HANDLING
+  ========================= */
   document.getElementById('guess-form').onsubmit = e => {
     e.preventDefault();
-    if (completedToday) return;
+    if (completed) return;
 
     const raw = input.value.trim();
     if (!raw) return;
@@ -110,94 +108,105 @@ export function startNameFour(container) {
     input.value = '';
     guessCount++;
 
-    // Already found
-    if (found.has(guess)) {
-      persistProgress(false);
+    if (found.has(guess) || revealed.has(guess)) {
+      persist();
       return;
     }
 
-    // Correct guess
     if (answers.includes(guess)) {
       found.add(guess);
-      persistProgress(false);
-      renderFound();
+      awardXP();
+      renderGrid();
 
-      if (found.size === 4) {
+      if (found.size + revealed.size === 4) {
         finishGame();
       }
-      return;
     }
 
-    // Wrong guess
-    persistProgress(false);
+    persist();
   };
 
   /* =========================
      RENDERING
   ========================= */
-  function renderFound() {
-    foundList.innerHTML = '';
-    foundCount.textContent = found.size;
+  function renderGrid() {
+    grid.innerHTML = '';
 
-    [...found].forEach(word => {
-      const li = document.createElement('li');
-      li.textContent = word;
-      li.className = 'found-item';
-      foundList.appendChild(li);
+    answers.forEach(answer => {
+      const solved = found.has(answer) || revealed.has(answer);
+
+      const box = document.createElement('div');
+      box.className = `answer-box ${solved ? 'solved' : ''}`;
+
+      const text = document.createElement('div');
+      text.className = 'answer-text';
+      text.textContent = solved
+        ? answer
+        : answer.replace(/[A-Z]/gi, '_');
+
+      box.appendChild(text);
+
+      if (!solved && !completed) {
+        const revealBtn = document.createElement('button');
+        revealBtn.className = 'reveal-single-btn';
+        revealBtn.textContent = 'Reveal';
+
+        revealBtn.onclick = () => {
+          revealed.add(answer);
+          renderGrid();
+
+          if (found.size + revealed.size === 4) {
+            finishGame();
+          }
+
+          persist();
+        };
+
+        box.appendChild(revealBtn);
+      }
+
+      grid.appendChild(box);
     });
   }
 
   /* =========================
-     PROGRESS
+     XP + PROGRESS
   ========================= */
-  function persistProgress(completed) {
+  function awardXP() {
+    xpAwarded += XP_PER_ANSWER;
+    progression.addXP(XP_PER_ANSWER);
+  }
+
+  function persist(done = false) {
     saveNameFourProgress({
       date: today,
       found: [...found],
-      completed,
-      guessCount
+      revealed: [...revealed],
+      completed: done || completed,
+      guessCount,
+      xpAwarded
     });
   }
 
   function finishGame() {
-    persistProgress(true);
-
-    const result = progression.addXP(XP_REWARD);
+    completed = true;
     progression.markPlayedToday('name-four');
 
     input.disabled = true;
     document.querySelector('#guess-form button').disabled = true;
 
-    showCompletedMessage(result);
+    persist(true);
+    showCompletionMessage();
   }
 
-  function showCompletedMessage(result) {
-    let message = `
+  function showCompletionMessage() {
+    completionMessage.innerHTML = `
       <div class="completion">
-        🎉 You got all four!
-        <div class="xp">+${XP_REWARD} XP</div>
-        <p>Solved in <strong>${guessCount}</strong> guesses</p>
-    `;
-
-    if (result && result.leveledUp && result.newRewards.length > 0) {
-      message += `
-        <div style="margin-top: 20px; padding: 15px; background: linear-gradient(135deg, #5f8f7a 0%, #7fb3a1 100%); color: white; border-radius: 8px;">
-          <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;">🎉 LEVEL UP! 🎉</div>
-          ${result.newRewards.map(reward => `
-            <div style="margin-top: 10px;">
-              <strong>${reward.title}</strong>
-              <div style="font-size: 0.9rem; opacity: 0.9;">${reward.description}</div>
-            </div>
-          `).join('')}
-        </div>
-      `;
-    }
-
-    message += `
+        🎉 Puzzle complete
+        <div class="xp">+${xpAwarded} XP</div>
+        <p>Total guesses: <strong>${guessCount}</strong></p>
         <p>Come back tomorrow for a new category</p>
       </div>
     `;
-
-    completionMessage.innerHTML = message;
   }
 }

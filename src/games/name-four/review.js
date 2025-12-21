@@ -50,6 +50,9 @@ export function reviewNameFour(container) {
     return;
   }
 
+  const found = new Set(saved.found || []);
+  const revealed = new Set(saved.revealed || []);
+
   container.innerHTML = `
     <div class="name-four-review">
       <button class="back-btn" onclick="showHome()">← Back</button>
@@ -62,14 +65,38 @@ export function reviewNameFour(container) {
         </div>
 
         <div class="answers">
-          ${saved.found.map(word => `
-            <div class="review-answer">${word}</div>
-          `).join('')}
+          ${puzzle.answers.map(answer => {
+            const upper = answer.toUpperCase();
+
+            if (found.has(upper)) {
+              return `
+                <div class="review-answer guessed">
+                  ${upper}
+                </div>
+              `;
+            }
+
+            if (revealed.has(upper)) {
+              return `
+                <div class="review-answer revealed">
+                  ${upper}
+                  <div class="review-note">Revealed</div>
+                </div>
+              `;
+            }
+
+            return `
+              <div class="review-answer missed">
+                ${upper.replace(/[A-Z]/gi, '_')}
+                <div class="review-note">Missed</div>
+              </div>
+            `;
+          }).join('')}
         </div>
 
         <div class="stats">
           Total guesses made:
-          <strong>${saved.guessCount ?? saved.found.length}</strong>
+          <strong>${saved.guessCount ?? 0}</strong>
         </div>
       </div>
     </div>
