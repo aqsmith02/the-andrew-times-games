@@ -55,19 +55,25 @@ function isBlackjack(hand) {
   return hand.length === 2 && calculateHandValue(hand) === 21;
 }
 
+function canSplit(hand) {
+  return hand.length === 2 && getCardValue(hand[0]) === getCardValue(hand[1]);
+}
+
 export function startBlackjack(container) {
   const today = new Date().toDateString();
   let saved = loadBlackjackProgress();
 
   let gameState = {
     deck: [],
-    playerHand: [],
+    playerHands: [[]],  // Array of hands for splitting
     dealerHand: [],
-    bet: 0,
+    bets: [0],  // Array of bets (one per hand)
     gameOver: false,
     result: null,
-    playerStanding: false,
     playerBlackjack: false,
+    currentHandIndex: 0,
+    hasDoubledDown: [false],
+    hasSplit: false,
     date: today
   };
 
@@ -78,8 +84,14 @@ export function startBlackjack(container) {
   function render() {
     const currentXP = progression.getTotalXP();
     const canBet = currentXP >= 5;
-    const inProgress = gameState.bet > 0;
+    const inProgress = gameState.bets[0] > 0;
     const isGameOver = gameState.gameOver;
+    const currentHand = gameState.playerHands[gameState.currentHandIndex];
+    const currentBet = gameState.bets[gameState.currentHandIndex];
+    const isCurrentHandActive = !isGameOver && gameState.currentHandIndex < gameState.playerHands.length;
+
+    const canDouble = isCurrentHandActive && currentHand.length === 2 && currentXP >= currentBet;
+    const canSplitHand = isCurrentHandActive && canSplit(currentHand) && currentXP >= currentBet && gameState.playerHands.length < 4;
 
     container.innerHTML = `
       <div class="blackjack">
@@ -134,8 +146,8 @@ export function startBlackjack(container) {
         ` : `
           <div class="game-screen">
             <div class="bet-info">
-              <span class="bet-label">Current Bet:</span>
-              <span class="bet-amount">${gameState.bet} XP</span>
+              <span class="bet-label">Total Bet:</span>
+              <span class="bet-amount">${gameState.bets.reduce((sum, bet) => sum + bet, 0)} XP</span>
             </div>
 
             <div class="dealer-section">
@@ -154,17 +166,23 @@ export function startBlackjack(container) {
               </div>
             </div>
 
-            <div class="player-section">
-              <h3>Your Hand (${calculateHandValue(gameState.playerHand)})</h3>
-              <div class="hand">
-                ${gameState.playerHand.map(card => `
-                  <div class="card ${['♥', '♦'].includes(card.suit) ? 'red' : 'black'}">
-                    <div class="card-value">${card.value}</div>
-                    <div class="card-suit">${card.suit}</div>
-                  </div>
-                `).join('')}
+            ${gameState.playerHands.map((hand, handIdx) => `
+              <div class="player-section ${handIdx === gameState.currentHandIndex && !isGameOver ? 'active-hand' : ''}">
+                <h3>
+                  ${gameState.playerHands.length > 1 ? `Hand ${handIdx + 1} ` : 'Your Hand '}
+                  (${calculateHandValue(hand)})
+                  ${gameState.bets.length > 1 ? ` - Bet: ${gameState.bets[handIdx]} XP` : ''}
+                </h3>
+                <div class="hand">
+                  ${hand.map(card => `
+                    <div class="card ${['♥', '♦'].includes(card.suit) ? 'red' : 'black'}">
+                      <div class="card-value">${card.value}</div>
+                      <div class="card-suit">${card.suit}</div>
+                    </div>
+                  `).join('')}
+                </div>
               </div>
-            </div>
+            `).join('')}
 
             ${!isGameOver ? `
               <div class="game-actions">
@@ -174,22 +192,41 @@ export function startBlackjack(container) {
                 <button class="action-btn stand-btn" onclick="window.stand()">
                   Stand
                 </button>
+                ${canDouble ? `
+                  <button class="action-btn double-btn" onclick="window.doubleDown()">
+                    Double Down
+                  </button>
+                ` : ''}
+                ${canSplitHand ? `
+                  <button class="action-btn split-btn" onclick="window.split()">
+                    Split
+                  </button>
+                ` : ''}
               </div>
             ` : `
-              <div class="game-result ${gameState.result}">
-                ${gameState.result === 'win' ? `
-                  <div class="result-icon">${gameState.playerBlackjack ? '🎰' : '🎉'}</div>
-                  <h3>${gameState.playerBlackjack ? 'BLACKJACK!' : 'You Win!'}</h3>
-                  <p>You won ${Math.floor(gameState.bet * (gameState.playerBlackjack ? 1.5 : 1))} XP!${gameState.playerBlackjack ? ' (1.5x Blackjack Bonus!)' : ''}</p>
-                ` : gameState.result === 'lose' ? `
-                  <div class="result-icon">😔</div>
-                  <h3>You Lose</h3>
-                  <p>You lost ${gameState.bet} XP</p>
-                ` : `
-                  <div class="result-icon">🤝</div>
-                  <h3>Push!</h3>
-                  <p>Your bet of ${gameState.bet} XP has been returned</p>
-                `}
+              <div class="game-result-container">
+                ${gameState.playerHands.map((hand, handIdx) => {
+                  const handResult = gameState.result[handIdx];
+                  const handBet = gameState.bets[handIdx];
+                  return `
+                    <div class="game-result ${handResult}">
+                      ${gameState.playerHands.length > 1 ? `<h4>Hand ${handIdx + 1}</h4>` : ''}
+                      ${handResult === 'win' ? `
+                        <div class="result-icon">${gameState.playerBlackjack && handIdx === 0 ? '🎰' : '🎉'}</div>
+                        <h3>${gameState.playerBlackjack && handIdx === 0 ? 'BLACKJACK!' : 'You Win!'}</h3>
+                        <p>Won ${Math.floor(handBet * (gameState.playerBlackjack && handIdx === 0 ? 1.5 : 1))} XP!${gameState.playerBlackjack && handIdx === 0 ? ' (Blackjack Bonus!)' : ''}</p>
+                      ` : handResult === 'lose' ? `
+                        <div class="result-icon">😔</div>
+                        <h3>You Lose</h3>
+                        <p>Lost ${handBet} XP</p>
+                      ` : `
+                        <div class="result-icon">🤝</div>
+                        <h3>Push!</h3>
+                        <p>Bet returned: ${handBet} XP</p>
+                      `}
+                    </div>
+                  `;
+                }).join('')}
                 <button class="action-btn primary" onclick="window.playAgain()">
                   Play Again
                 </button>
@@ -223,31 +260,33 @@ export function startBlackjack(container) {
 
     gameState = {
       deck: createDeck(),
-      playerHand: [],
+      playerHands: [[]],
       dealerHand: [],
-      bet: betAmount,
+      bets: [betAmount],
       gameOver: false,
       result: null,
-      playerStanding: false,
       playerBlackjack: false,
+      currentHandIndex: 0,
+      hasDoubledDown: [false],
+      hasSplit: false,
       date: today
     };
 
     // Deal initial cards
-    gameState.playerHand.push(gameState.deck.pop());
+    gameState.playerHands[0].push(gameState.deck.pop());
     gameState.dealerHand.push(gameState.deck.pop());
-    gameState.playerHand.push(gameState.deck.pop());
+    gameState.playerHands[0].push(gameState.deck.pop());
     gameState.dealerHand.push(gameState.deck.pop());
 
     // Check for blackjack
-    if (isBlackjack(gameState.playerHand)) {
+    if (isBlackjack(gameState.playerHands[0])) {
       gameState.playerBlackjack = true;
       
       // Check if dealer also has blackjack (push)
       if (isBlackjack(gameState.dealerHand)) {
-        endGame('push');
+        endGame(['push']);
       } else {
-        endGame('win');
+        endGame(['win']);
       }
       return;
     }
@@ -259,13 +298,16 @@ export function startBlackjack(container) {
   function hit() {
     if (gameState.gameOver) return;
 
-    gameState.playerHand.push(gameState.deck.pop());
-    const playerValue = calculateHandValue(gameState.playerHand);
+    const handIdx = gameState.currentHandIndex;
+    gameState.playerHands[handIdx].push(gameState.deck.pop());
+    const handValue = calculateHandValue(gameState.playerHands[handIdx]);
 
-    if (playerValue > 21) {
-      endGame('lose');
-    } else if (playerValue === 21) {
-      stand();
+    if (handValue > 21) {
+      // Bust - move to next hand or end game
+      moveToNextHand();
+    } else if (handValue === 21 || gameState.hasDoubledDown[handIdx]) {
+      // Auto-stand on 21 or after double down
+      moveToNextHand();
     } else {
       saveBlackjackProgress(gameState);
       render();
@@ -274,43 +316,141 @@ export function startBlackjack(container) {
 
   function stand() {
     if (gameState.gameOver) return;
+    moveToNextHand();
+  }
 
-    gameState.playerStanding = true;
+  function doubleDown() {
+    if (gameState.gameOver) return;
+    
+    const handIdx = gameState.currentHandIndex;
+    const currentBet = gameState.bets[handIdx];
+    const currentXP = progression.getTotalXP();
 
+    if (currentXP < currentBet) {
+      alert('Insufficient XP to double down');
+      return;
+    }
+
+    if (gameState.playerHands[handIdx].length !== 2) {
+      alert('Can only double down on first two cards');
+      return;
+    }
+
+    // Deduct additional bet
+    progression.subtractXP(currentBet);
+    gameState.bets[handIdx] *= 2;
+    gameState.hasDoubledDown[handIdx] = true;
+
+    // Deal one more card and automatically stand
+    gameState.playerHands[handIdx].push(gameState.deck.pop());
+    
+    moveToNextHand();
+  }
+
+  function split() {
+    if (gameState.gameOver) return;
+
+    const handIdx = gameState.currentHandIndex;
+    const currentBet = gameState.bets[handIdx];
+    const currentXP = progression.getTotalXP();
+
+    if (currentXP < currentBet) {
+      alert('Insufficient XP to split');
+      return;
+    }
+
+    if (!canSplit(gameState.playerHands[handIdx])) {
+      alert('Can only split pairs');
+      return;
+    }
+
+    if (gameState.playerHands.length >= 4) {
+      alert('Maximum 4 hands allowed');
+      return;
+    }
+
+    // Deduct additional bet
+    progression.subtractXP(currentBet);
+    gameState.hasSplit = true;
+
+    // Split the hand
+    const card1 = gameState.playerHands[handIdx][0];
+    const card2 = gameState.playerHands[handIdx][1];
+
+    gameState.playerHands[handIdx] = [card1];
+    gameState.playerHands.splice(handIdx + 1, 0, [card2]);
+    gameState.bets.splice(handIdx + 1, 0, currentBet);
+    gameState.hasDoubledDown.splice(handIdx + 1, 0, false);
+
+    // Deal one card to each new hand
+    gameState.playerHands[handIdx].push(gameState.deck.pop());
+    gameState.playerHands[handIdx + 1].push(gameState.deck.pop());
+
+    saveBlackjackProgress(gameState);
+    render();
+  }
+
+  function moveToNextHand() {
+    gameState.currentHandIndex++;
+    
+    if (gameState.currentHandIndex >= gameState.playerHands.length) {
+      // All hands played, now dealer plays
+      playDealer();
+    } else {
+      saveBlackjackProgress(gameState);
+      render();
+    }
+  }
+
+  function playDealer() {
     // Dealer draws until 17 or higher
     while (calculateHandValue(gameState.dealerHand) < 17) {
       gameState.dealerHand.push(gameState.deck.pop());
     }
 
-    const playerValue = calculateHandValue(gameState.playerHand);
     const dealerValue = calculateHandValue(gameState.dealerHand);
+    const results = [];
 
-    if (dealerValue > 21 || playerValue > dealerValue) {
-      endGame('win');
-    } else if (playerValue < dealerValue) {
-      endGame('lose');
-    } else {
-      endGame('push');
+    // Determine result for each hand
+    for (let i = 0; i < gameState.playerHands.length; i++) {
+      const playerValue = calculateHandValue(gameState.playerHands[i]);
+      
+      if (playerValue > 21) {
+        results.push('lose');
+      } else if (dealerValue > 21 || playerValue > dealerValue) {
+        results.push('win');
+      } else if (playerValue < dealerValue) {
+        results.push('lose');
+      } else {
+        results.push('push');
+      }
     }
+
+    endGame(results);
   }
 
-  function endGame(result) {
+  function endGame(results) {
     gameState.gameOver = true;
-    gameState.result = result;
+    gameState.result = results;
 
-    if (result === 'win') {
-      // Blackjack pays 2.5x total (including stake)
-      // Regular win pays 2x total (including stake)
-      const payout = gameState.playerBlackjack 
-        ? Math.floor(gameState.bet * 2.5)  // 2.5x total for blackjack
-        : gameState.bet * 2;                // 2x total for regular win
-      
-      progression.addXP(payout);
-    } else if (result === 'push') {
-      // Return the bet without triggering level-up logic
-      progression.subtractXP(-gameState.bet);
+    // Process payouts for each hand
+    for (let i = 0; i < results.length; i++) {
+      const result = results[i];
+      const bet = gameState.bets[i];
+
+      if (result === 'win') {
+        const isBlackjackHand = i === 0 && gameState.playerBlackjack;
+        const payout = isBlackjackHand 
+          ? Math.floor(bet * 2.5)  // 2.5x total for blackjack
+          : bet * 2;                // 2x total for regular win
+        
+        progression.addXP(payout);
+      } else if (result === 'push') {
+        // Return the bet without triggering level-up logic
+        progression.subtractXP(-bet);
+      }
+      // If lose, XP was already deducted so do nothing
     }
-    // If lose, XP was already deducted so do nothing
 
     saveBlackjackProgress(gameState);
     render();
@@ -319,13 +459,15 @@ export function startBlackjack(container) {
   function playAgain() {
     gameState = {
       deck: [],
-      playerHand: [],
+      playerHands: [[]],
       dealerHand: [],
-      bet: 0,
+      bets: [0],
       gameOver: false,
       result: null,
-      playerStanding: false,
       playerBlackjack: false,
+      currentHandIndex: 0,
+      hasDoubledDown: [false],
+      hasSplit: false,
       date: today
     };
     saveBlackjackProgress(gameState);
@@ -341,6 +483,8 @@ export function startBlackjack(container) {
   };
   window.hit = hit;
   window.stand = stand;
+  window.doubleDown = doubleDown;
+  window.split = split;
   window.playAgain = playAgain;
 
   render();
