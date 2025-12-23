@@ -79,7 +79,7 @@ export async function startWordle(container) {
     if (savedProgress.won) {
       showMessage(`🎉 You already completed today's Wordle! +${WIN_XP} XP`);
     } else {
-      showMessage(`😢 The word was ${ANSWER}`);
+      showMessage(`The word was ${ANSWER}`);
     }
   }
 
@@ -207,7 +207,7 @@ export async function startWordle(container) {
         showMessage(`🎉 You got it! +${WIN_XP} XP`);
       }
     } else {
-      showMessage(`😢 The word was ${ANSWER}`);
+      showMessage(`The word was ${ANSWER}`);
     }
 
     // Final save with completion status
