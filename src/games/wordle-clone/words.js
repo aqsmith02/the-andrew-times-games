@@ -70,15 +70,7 @@ export async function loadWordLists() {
     ALLOWED = new Set([...ANSWERS, ...allowedWords]);
 
     loaded = true;
-
-    console.log(
-      '✅ Word lists loaded:',
-      ANSWERS.length,
-      'answers,',
-      ALLOWED.size,
-      'allowed'
-    );
-    console.log("Today's answer:", getDailyAnswer());
+    
   } catch (error) {
     console.error('❌ Failed to load word lists:', error);
     throw error;
