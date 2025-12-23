@@ -8,6 +8,8 @@ import { startNameFour } from './games/name-four/index.js';
 import { reviewNameFour } from './games/name-four/review.js';
 import { startSudoku } from './games/sudoku/index.js';
 import { reviewSudoku } from './games/sudoku/review.js';
+import { startBlackjack } from './games/blackjack/index.js';
+import { reviewBlackjack } from './games/blackjack/review.js';
 import { progression, RARITY_COLORS, RARITY_LABELS } from './utils/progression.js';
 
 const app = document.getElementById('app');
@@ -133,6 +135,18 @@ function showHome() {
             ? '<div class="completed-badge">✓ Completed — Click to Review</div>'
             : '<div class="play-badge">Play Now</div>'
           }
+        </div>
+
+        <!-- BLACKJACK -->
+        <div class="game-card"
+            onclick="handleGameClick('blackjack')">
+          <div class="game-icon">
+            <img src="./game-icons/blackjack_192.png" alt="Blackjack" />
+          </div>
+          <h3>Blackjack</h3>
+          <p>Bet XP to win double</p>
+          <div class="game-xp">Bet 5-50 XP</div>
+          <div class="play-badge">Play Now</div>
         </div>
       </div>
 
@@ -337,7 +351,10 @@ function showCollection() {
    GAME ROUTING
 ========================= */
 async function handleGameClick(gameName) {
-  if (progression.hasPlayedToday(gameName)) {
+  if (gameName === 'blackjack') {
+    // Blackjack doesn't use the hasPlayedToday system
+    await playGame(gameName);
+  } else if (progression.hasPlayedToday(gameName)) {
     reviewGame(gameName);
   } else {
     await playGame(gameName);
@@ -366,9 +383,12 @@ async function playGame(gameName) {
   }
 
   if (gameName === 'sudoku') {
-  startSudoku(container);
+    startSudoku(container);
   }
 
+  if (gameName === 'blackjack') {
+    startBlackjack(container);
+  }
 }
 
 function reviewGame(gameName) {
@@ -393,9 +413,12 @@ function reviewGame(gameName) {
   }
 
   if (gameName === 'sudoku') {
-  reviewSudoku(container);
+    reviewSudoku(container);
   }
 
+  if (gameName === 'blackjack') {
+    reviewBlackjack(container);
+  }
 }
 
 /* =========================
