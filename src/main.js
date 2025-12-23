@@ -6,6 +6,8 @@ import { startWordle } from './games/wordle-clone/index.js';
 import { reviewTodayWordle } from './games/wordle-clone/review.js';
 import { startNameFour } from './games/name-four/index.js';
 import { reviewNameFour } from './games/name-four/review.js';
+import { startSudoku } from './games/sudoku/index.js';
+import { reviewSudoku } from './games/sudoku/review.js';
 import { progression, RARITY_COLORS, RARITY_LABELS } from './utils/progression.js';
 
 const app = document.getElementById('app');
@@ -112,6 +114,22 @@ function showHome() {
           <div class="game-xp">Up to 100 XP</div>
 
           ${progression.hasPlayedToday('name-four')
+            ? '<div class="completed-badge">✓ Completed — Click to Review</div>'
+            : '<div class="play-badge">Play Now</div>'
+          }
+        </div>
+
+        <!-- SUDOKU -->
+        <div class="game-card ${progression.hasPlayedToday('sudoku') ? 'completed' : ''}"
+            onclick="handleGameClick('sudoku')">
+          <div class="game-icon">
+            <img src="./game-icons/sudoku_192.png" alt="Sudoku" />
+          </div>
+          <h3>Sudoku</h3>
+          <p>Complete the daily puzzle</p>
+          <div class="game-xp">100 XP</div>
+
+          ${progression.hasPlayedToday('sudoku')
             ? '<div class="completed-badge">✓ Completed — Click to Review</div>'
             : '<div class="play-badge">Play Now</div>'
           }
@@ -346,6 +364,11 @@ async function playGame(gameName) {
   if (gameName === 'name-four') {
     startNameFour(container);
   }
+
+  if (gameName === 'sudoku') {
+  startSudoku(container);
+  }
+
 }
 
 function reviewGame(gameName) {
@@ -368,6 +391,11 @@ function reviewGame(gameName) {
   if (gameName === 'name-four') {
     reviewNameFour(container);
   }
+
+  if (gameName === 'sudoku') {
+  reviewSudoku(container);
+  }
+
 }
 
 /* =========================
