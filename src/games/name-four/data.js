@@ -2,12 +2,13 @@
 
 export const NAME_FOUR_PUZZLES = [
   {
-    category: 'My Favorite 80s Rock Bands',
-    answers: ['the smiths', 'talking heads', 'misfits', 'queen']
-  },
-  {
-    category: 'My Four Favorite Beers',
-    answers: ['guinness', 'blue moon', 'coors light', 'michelob ultra']
+    category: 'Things I Would Put In My Butt If I Had To',
+    answers: [
+      'Marshmallow',
+      'M&Ms',
+      'Bar of Soap',
+      'Finger'
+    ]
   },
   {
     category: "Madison's Food Combos",
@@ -16,24 +17,6 @@ export const NAME_FOUR_PUZZLES = [
       'orange juice and popcorn',
       'weenies and toast',
       'jam and sausage'
-    ]
-  },
-  {
-    category: 'My Spotify Wrapped Artists',
-    answers: [
-      'radiohead',
-      'nat king cole',
-      'bobby darin',
-      'a tribe called quest'
-    ]
-  },
-  {
-    category: 'The Four Best Cities I Have Visited',
-    answers: [
-      'Chicago',
-      'Charleston',
-      'St. Augustine',
-      'Anna Maria'
     ]
   },
   {
@@ -46,67 +29,8 @@ export const NAME_FOUR_PUZZLES = [
     ]
   },
   {
-    category: 'Art I Would Get A Tattoo Of (Music, Movies, etc.)',
-    answers: [
-      'Bladerunner',
-      'Rage Against The Machine',
-      'Radiohead',
-      'Tool'
-    ]
-  },
-  {
-    category: 'Things I Would Put In My Butt If I Had To',
-    answers: [
-      'Marshmallow',
-      'M&Ms',
-      'Bar of Soap',
-      'Finger'
-    ]
-  },
-  {
-    category: 'Jobs I\'d Try For A Month',
-    answers: [
-      'Police Officer',
-      'Baker',
-      'Fisherman',
-      'Mechanic'
-    ]
-  },
-  {
-    category: 'Things I\'d Buy If I Won The Lottery',
-    answers: [
-      'Suit',
-      'Ear Rings',
-      'Radiohead Tickets',
-      'Porsche'
-    ]
-  },
-  {
-    category: 'Worst Celebrities (Not Criminal)',
-    answers: [
-      'James Corden',
-      'Ellen DeGeneres',
-      'Drake',
-      'Adam Sandler'
-    ]
-  },
-  {
-    category: 'Bugs I Would Like To Be',
-    answers: [
-      'Bee',
-      'Dragonfly',
-      'Caterpillar',
-      'Centipede'
-    ]
-  },
-  {
-    category: 'Funny Road Names Near Madison',
-    answers: [
-      'pickle buddy court',
-      'honey girl lane',
-      'ruby golightly drive',
-      'apple butter drive'
-    ]
+    category: 'My Favorite 80s Rock Bands',
+    answers: ['the smiths', 'talking heads', 'misfits', 'queen']
   },
   {
     category: 'Food Items That Give You The Worst Breath',
@@ -163,6 +87,73 @@ export const NAME_FOUR_PUZZLES = [
     ]
   },
   {
+    category: 'Funny Road Names Near Madison',
+    answers: [
+      'pickle buddy court',
+      'honey girl lane',
+      'ruby golightly drive',
+      'apple butter drive'
+    ]
+  },
+  {
+    category: 'My Four Favorite Beers',
+    answers: ['guinness', 'blue moon', 'coors light', 'michelob ultra']
+  },
+  {
+    category: 'My Spotify Wrapped Artists',
+    answers: [
+      'radiohead',
+      'nat king cole',
+      'bobby darin',
+      'a tribe called quest'
+    ]
+  },
+  {
+    category: 'The Four Best Cities I Have Visited',
+    answers: [
+      'Chicago',
+      'Charleston',
+      'St. Augustine',
+      'Anna Maria'
+    ]
+  },
+  {
+    category: 'Art I Would Get A Tattoo Of (Music, Movies, etc.)',
+    answers: [
+      'Bladerunner',
+      'Rage Against The Machine',
+      'Radiohead',
+      'Tool'
+    ]
+  },
+  {
+    category: 'Jobs I\'d Try For A Month',
+    answers: [
+      'Police Officer',
+      'Baker',
+      'Fisherman',
+      'Mechanic'
+    ]
+  },
+  {
+    category: 'Things I\'d Buy If I Won The Lottery',
+    answers: [
+      'Suit',
+      'Ear Rings',
+      'Radiohead Tickets',
+      'Porsche'
+    ]
+  },
+  {
+    category: 'Bugs I Would Like To Be',
+    answers: [
+      'Bee',
+      'Dragonfly',
+      'Caterpillar',
+      'Centipede'
+    ]
+  },
+  {
     category: 'Favorite Simpson Characters',
     answers: [
       'Homer Simpson',
@@ -205,6 +196,15 @@ export const NAME_FOUR_PUZZLES = [
       'Corgi',
       'Dachshund',
       'Cattle Dog'
+    ]
+  },
+  {
+    category: 'Worst Celebrities (Not Criminal)',
+    answers: [
+      'James Corden',
+      'Ellen DeGeneres',
+      'Drake',
+      'Adam Sandler'
     ]
   },
 ];
