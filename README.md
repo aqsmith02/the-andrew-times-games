@@ -4,27 +4,27 @@ A collection of mini games with progression for the family.
 
 ## Games
 
-· This or That (guess which of two options I would pick)
-· Wordle
-· Name Four (given a category, name the four things that fit best)
-· Sudoku
-· Blackjack
+- **This or That**: Guess which of two options I would pick.
+- **Wordle**
+- **Name Four**: Given a category, name the four things that fit best.
+- **Sudoku**
+- **Blackjack**
 
 ## Progression
 
-Each game awards XP. Players level up every 300 XP gained, unlocking a mystery box with a random sticker. 20 stickers are available to collect with varying rarity.
+Each game awards XP. Players level up every 300 XP gained, unlocking a mystery box with a random sticker. There are 20 stickers to collect, each with varying rarity.
 
-## How to download to homescreen on iOS:
+## How to download to homescreen on iOS
 
-· Open in safari
-· Click the three dots on the side
-· Click share at the top
-· Scroll down and click add to Home Screen
+1. Open in Safari.
+2. Click the three dots on the side.
+3. Click **Share** at the top.
+4. Scroll down and click **Add to Home Screen**.
 
-## How to download to homescreen on android:
+## How to download to homescreen on Android
 
-· Open in chrome
-· Click the install prompt OR tap the three dots on the side and click add to home screen
+1. Open in Chrome.
+2. Click the install prompt **OR** tap the three dots on the side and click **Add to Home Screen**.
 
 ## Author
 
