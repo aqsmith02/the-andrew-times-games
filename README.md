@@ -13,3 +13,7 @@ A collection of mini games with progression for the family.
 
 · Open in chrome
 · Click the install prompt OR tap the three dots on the side and click add to home screen
+
+## Author
+
+Andrew Smith
